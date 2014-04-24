@@ -11,7 +11,7 @@ for file in os.listdir("/share/volatile_scratch/nehil/sync_files"):
         		# fileObject.write("echo \" "+ str(file) + "\"\n\n") 
                 fileObject.write("perl -d:DProf /home/nehil/popoolation2_1201/create-genewise-sync.pl " + 
                 "--input /share/volatile_scratch/nehil/sync_files/" + file + 
-                " --gtf /share/volatile_scratch/nehil/sync_files/Mus_musculus.GRCm38.75.gtf" + 
+                " --gtf /share/volatile_scratch/nehil/Mus_musculus.GRCm38.75.gtf" + 
                 " --output /share/volatile_scratch/nehil/gene-sync-files/" + os.path.splitext(file)[0] + ".sync  \n\n")
 
 fileObject.close()
