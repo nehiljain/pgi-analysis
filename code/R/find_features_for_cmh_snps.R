@@ -38,19 +38,22 @@ db <- dbConnect(SQLite(), dbname="./Test.sqlite")
 findAndStoreRelatedFeatures <- function(featureData, snpRow ) {
   print(snpRow)
   featuresFoundDataFrame <- filter(featureData, start <= snpRow$V2 & end >= snpRow$V2)
-  featuresFoundDataFrame$snp_name <- snpRow$V3
-  featuresFoundDataFrame$snp_bp <- snpRow$V2
-  featuresFoundDataFrame$snp_p_value <- snpRow$V4
-  if(dbExistsTable(conn = db, name = "SNPS_IN_FEATURES_TABLE") == TRUE) {
-    dbWriteTable(conn = db,  name = "SNPS_IN_FEATURES_TABLE", 
-                 featuresFoundDataFrame, append = T, row.names = TRUE)
-  }  else {
-    dbWriteTable(conn = db,  name = "SNPS_IN_FEATURES_TABLE", featuresFoundDataFrame, row.names = TRUE)
+  if (dim(featuresFoundDataFrame)[[1]] > 0) {
+    featuresFoundDataFrame$snp_name <- snpRow$V3
+    featuresFoundDataFrame$snp_bp <- snpRow$V2
+    featuresFoundDataFrame$snp_p_value <- snpRow$V4
+    print(str(featuresFoundDataFrame))
+    if (dbExistsTable(conn = db, name = "SNPS_IN_FEATURES_TABLE") == TRUE) {
+      dbWriteTable(conn = db,  name = "SNPS_IN_FEATURES_TABLE", 
+                   featuresFoundDataFrame, append = T, row.names = TRUE)
+    }  else {
+      dbWriteTable(conn = db,  name = "SNPS_IN_FEATURES_TABLE", featuresFoundDataFrame, row.names = TRUE)
+    }
   }
-
 }
 
 
 findAndStoreRelatedFeatures(featureData_chr_1,snpData_chr_1[48000,])
+findAndStoreRelatedFeatures(featureData_chr_1,snpData_chr_1[47000,])
 
 
