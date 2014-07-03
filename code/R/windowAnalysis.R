@@ -14,8 +14,10 @@ outPrefix <- "chr1"
 outFilename <- "coderepo/pgi-ngs-analysis/data/final/Window_Analysis_Chr1.csv"
 
 if (file.exists(outFilename) == TRUE) {
-  file.remove(outFilename=)
+  file.remove(outFilename)
 }
+
+
 
 # Name iof the input file 
 inputFileName <- "coderepo/pgi-ngs-analysis/data/final/SNPS_IN_FEATURES.csv"
@@ -111,16 +113,6 @@ for (i  in 1:length(geneDfList)) {
   windowStart <- 0
   windowEnd <- 0
   
-  finalGeneDf <- finalGeneDf[,c("gene_id",
-                                "gene_name",
-                                "snp_count",
-                                "max_snp_cmh_neg_log",
-                                "min_snp_cmh_neg_log",
-                                "mean_snp_cmh_neg_log",
-                                "sd_snp_cmh_neg_log",
-                                "median_snp_cmh_neg_log",
-                                "iqr_snp_cmh_neg_log",
-                                "window_index")]
   
   if (file.exists(outFilename) == TRUE) {
     write.table(finalGeneDf, file = outFilename, quote=F, sep = ",", append = T,  col.names = FALSE, row.names= FALSE)

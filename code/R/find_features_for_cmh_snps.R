@@ -1,3 +1,5 @@
+rm(list=ls())
+
 library(plyr)
 library(dplyr)
 library(DBI)
@@ -38,20 +40,6 @@ extractGeneBiotype <- function(row) {
 
 }
 
-
-countSnpsInSource <- function(Df, outputSuffix) {
-  
-  snps_in_sources_count_Df <- Df %.%
-    group_by(source) %.% 
-    summarise(count = n())
-  write.csv(snps_in_sources_count_Df, file = paste("data/final/",outputSuffix,"snps_in_source",".csv",sep=""), quote=F, row.names = TRUE, col.names = FALSE)
-  
-  snps_in_sources_count_plot <- ggplot(data = snps_in_sources_count_Df, aes(x = source, y = count)) +
-    geom_bar(stat="identity", fill="#756bb1", width=.7) +
-    theme(axis.text.x = element_text(angle = 90, hjust = 1))
-  
-  ggsave(file=paste("figure/",outputSuffix,"snps_in_source_count",".pdf",sep=""), plot=snps_in_sources_count_plot, width=12, height=8)
-}
 
 
 
@@ -94,9 +82,6 @@ findFeatureForCmhSnps <- function(featureFileName, gwasFileName, outputSuffix) {
   dbName <- paste("data/final/",outputSuffix,"_SNPS_IN_FEATURES_DATA",".sqlite", sep="")
   outFilename <- paste("data/final/",outputSuffix,"_SNPS_IN_FEATURES_DATA",".csv", sep="") 
   
- 
-  
-  
   # Clearing the old version of the filess
   
   if (file.exists(outFilename) == TRUE) {
@@ -105,20 +90,7 @@ findFeatureForCmhSnps <- function(featureFileName, gwasFileName, outputSuffix) {
   
   db <- dbConnect(SQLite(), dbname = dbName)
   
-  
-  # dbSendQuery(conn = db, "CREATE TABLE SNPS_IN_FEATURES (
-  #               ID INTEGER PRIMARY KEY   AUTOINCREMENT,
-  #               CHR_NO TEXT NOT NULL,
-  #               SOURCE TEXT NOT NULL
-  #             )")
-  
-  
-  # dbSendQuery(conn = db, "INSERT INTO SNPS_IN_FEATURES (CHR_NO, SOURCE) VALUES ('chr1', 'something')")
-  # dbWriteTable(conn = db, name = "testData1", value = testData, row.names = TRUE,)
-  
-  
-  # dbRemoveTable(conn = db, "SNPS_IN_FEATURES_TABLE")
-  
+ 
   findAndStoreRelatedFeatures <- function(featureData, snpRow ) {
     print(snpRow$SNP)
     featuresFoundDataFrame <- filter(featureData, start <= snpRow$BP & end >= snpRow$BP)
@@ -159,44 +131,6 @@ findFeatureForCmhSnps <- function(featureFileName, gwasFileName, outputSuffix) {
 #   d_ply(cmhSnpData, "BP", function(x) {
 #     findAndStoreRelatedFeatures(featureData = chrFeatureData,snpRow = x)
 #   })
-  
-  Df <- read.csv(outFilename, stringsAsFactors = F, row.names=NULL, header = T)
-  # 
-  Df <- tbl_df(Df)
-  # # Df$gene_id <- as.factor(Df$gene_id)
-  str(Df$gene_id)
-  snps_in_Gene_count_Df <- Df %.%
-    group_by(gene_id, gene_name) %.% 
-    summarise(count = n())
-  
-  snps_in_features_count_Df <- Df %.%
-    group_by(feature) %.% 
-    summarise(count = n())
-  # 
-  
-
-  
- 
-  # 
-  write.csv(snps_in_features_count_Df, file = paste("data/final/",outputSuffix,"snps_in_features_count",".csv",sep=""), quote=F, row.names = TRUE, col.names = FALSE)
-  # 
-  write.csv(snps_in_Gene_count_Df, file = paste("data/final/",outputSuffix,"snps_in_gene_count",".csv",sep=""), quote=F, row.names = TRUE, col.names = FALSE)
-  # 
-  # 
-  snps_in_Gene_count_plot <- ggplot(data = snps_in_Gene_count_Df, aes(x = gene_id, y = count)) +
-    geom_bar(stat="identity", fill="#756bb1", width=.7) 
-  # 
-  snps_in_features_count_plot <- ggplot(data = snps_in_features_count_Df, aes(x = feature, y = count)) +
-    geom_bar(stat="identity", fill="#756bb1", width=.7) +
-    theme(axis.text.x = element_text(angle = 90, hjust = 1))
-  # 
-  
-  
-  ggsave(file=paste("figure/",outputSuffix,"snps_in_gene_count",".pdf",sep=""), plot=snps_in_Gene_count_plot, width=12, height=8)
-  ggsave(file=paste("figure/",outputSuffix,"snps_in_features_count",".pdf",sep=""), plot=snps_in_features_count_plot, width=12, height=8)
- 
-  # 
-
   
 }
 
