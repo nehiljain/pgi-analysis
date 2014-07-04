@@ -4,7 +4,6 @@ library(plyr)
 library(dplyr)
 library(DBI)
 library(RSQLite)
-# library(sqldf)
 library(ggplot2)
 library(stringr)
 # 
@@ -47,13 +46,14 @@ extractGeneBiotype <- function(row) {
 # create a function to get the feature file name, the gwas file name, a string suffix to be put in outfile names
 
 featureFileName <- "data/raw/1_Mod_Mus.gtf"
-gwasFileName <- "data/raw/allSamples.chr1:1-195471971.gwas"
-outputSuffix <- "chr1" 
-# findFeatureForCmhSnps(featureFileName, gwasFileName, outputSuffix)
+gwasDirPath <- "data/raw/"
+gwasFileName <- "allSamples.chr1:1-195471971.gwas"
+outputPrefix <- "chr1" 
+# findFeatureForCmhSnps(featureFileName, gwasFileName, outputPrefix)
 
 
 
-findFeatureForCmhSnps <- function(featureFileName, gwasFileName, outputSuffix) {
+findFeatureForCmhSnps <- function(featureFileName, gwasFileName, outputPrefix, outputDirPath) {
 
   
   #Data Input
@@ -61,6 +61,7 @@ findFeatureForCmhSnps <- function(featureFileName, gwasFileName, outputSuffix) {
   names(chrFeatureData) <- c("chromosome.no", "source","feature","start","end","score","strand","frame","attributes")
   cmhSnpData <- read.table(gwasFileName, sep="\t", header = T, stringsAsFactors = F)
   
+  cat("Dimesnions of Input Data frames", "Feature Dataset", dim(chrFeatureData), "Snps Dataset", dim(cmhSnpData), "\n\n")
   
 #   separate gene attributes from the attributes column
   chrFeatureData <- ddply(chrFeatureData, .(start, end, attributes), transform, 
@@ -79,11 +80,12 @@ findFeatureForCmhSnps <- function(featureFileName, gwasFileName, outputSuffix) {
   
   
   
-  dbName <- paste("data/final/",outputSuffix,"_SNPS_IN_FEATURES_DATA",".sqlite", sep="")
-  outFilename <- paste("data/final/",outputSuffix,"_SNPS_IN_FEATURES_DATA",".csv", sep="") 
+  dbName <- paste(outputPrefix,"_SNPS_IN_FEATURES_DATA",".sqlite", sep="")
+  outFilename <- paste(outputDirPath, outputPrefix, "_SNPS_IN_FEATURES_DATA",".csv", sep="") 
   
   # Clearing the old version of the filess
-  
+  cat("dbname",dbName,"outFilename",outFilename )
+
   if (file.exists(outFilename) == TRUE) {
     file.remove(outFilename)
   } 
@@ -91,7 +93,7 @@ findFeatureForCmhSnps <- function(featureFileName, gwasFileName, outputSuffix) {
   db <- dbConnect(SQLite(), dbname = dbName)
   
  
-  findAndStoreRelatedFeatures <- function(featureData, snpRow ) {
+  findAndStoreRelatedFeatures <- function(featureData, snpRow,db ) {
     print(snpRow$SNP)
     featuresFoundDataFrame <- filter(featureData, start <= snpRow$BP & end >= snpRow$BP)
     if (dim(featuresFoundDataFrame)[[1]] > 0) {
@@ -124,7 +126,7 @@ findFeatureForCmhSnps <- function(featureFileName, gwasFileName, outputSuffix) {
 #   # Test 3
   testSnpData <- cmhSnpData[47100:48050,]
   d_ply(testSnpData, "BP", function(x) {
-    findAndStoreRelatedFeatures(featureData = chrFeatureData,snpRow = x)
+    findAndStoreRelatedFeatures(featureData = chrFeatureData,snpRow = x, db)
   })
 
 ## Big Analysis 
@@ -136,13 +138,15 @@ findFeatureForCmhSnps <- function(featureFileName, gwasFileName, outputSuffix) {
 
 
 
-
+cat("Starting Analysis of finding Features with SNPs within \n\n")
 
 ## Real work happening here. 
 
 gtfDirPath = "~/coderepo/pgi-ngs-analysis/data/raw/"
 gwasDirPath = "~/coderepo/pgi-ngs-analysis/data/raw/"
+outputDirPath <- "data/final/"
 
+cat("Paths \n gtfDirPath = ", gtfDirPath, " gwasDirPath = ", gwasDirPath, " outputDirPath = ", outputDirPath, "\n")
 
 # run all chromosomes function
 
@@ -150,9 +154,14 @@ gwasDirPath = "~/coderepo/pgi-ngs-analysis/data/raw/"
 gtfFileNamesList <- list.files(path=gtfDirPath, pattern=".gtf", ignore.case = T)
 gwasFileNamesList <- list.files(path=gwasDirPath, pattern=".gwas", ignore.case = T)
 
+cat("List of gtfFileNames\n")
+print(gtfFileNamesList)
+
+cat("List of gwasFileNames\n")
+print(gwasFileNamesList)
 
 for ( i in 1:19) {
-  print(i)
+  cat("iteration ::",i)
   featureFileName <- gtfFileNamesList[complete.cases(
     str_locate(gtfFileNamesList, 
                pattern=paste("^",i,"_Mod_Mus.gtf",  sep="")))]
@@ -162,11 +171,12 @@ for ( i in 1:19) {
                                           str_locate(gwasFileNamesList, 
                                                     pattern = paste("allSamples.chr",i,":", sep="")))]
   
-  print(featureFileName)
-  print(gwasFileName)
+  cat(" featureFileName : ",featureFileName, " gwasFileName : ", gwasFileName,"\n\n")
+  # print(gwasFileName)
   findFeatureForCmhSnps(featureFileName = paste(gtfDirPath,featureFileName,sep=""), 
                         gwasFileName = paste(gwasDirPath,gwasFileName,sep=""), 
-                        outputSuffix = paste("chr",i, sep="_"))
+                        outputPrefix = paste("chr",i, sep=""),
+                        outputDirPath = outputDirPath)
   
 }
 
