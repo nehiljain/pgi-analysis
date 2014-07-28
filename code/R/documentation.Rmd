@@ -1,0 +1,65 @@
+Gene Meta Analysis
+========================================================
+
+This is an R Markdown document. This is to document all the analysis done and the explaination of the attributes of ach data table created.
+
+Input:
+
+###Snps found in features. 
+
+File Name : "SNPS_IN_FEATURES.csv"
+
+```{r}
+library(ggplot2)
+snpsInFeatures <- read.csv("~/coderepo/pgi-ngs-analysis/data/final/SNPS_IN_FEATURES.csv", nrows=1 stringsAsFactors = F, row.names=NULL, header = T)
+
+snpsInFeatures$gene_name <- as.factor(snpsInFeatures$gene_name)
+snpsInFeatures$gene_id <- as.factor(snpsInFeatures$gene_id)
+snpsInFeatures <- snpsInFeatures[ , -which(names(snpsInFeatures) %in% c("attributes"))]
+
+head(snpsInFeatures)
+
+```
+
+The number of gene names and gene ids in this file are 
+
+```{r}
+
+str(snpsInFeatures$gene_id)
+str(snpsInFeatures$gene_name)
+
+```
+
+
+In trying to identify the duplication of genes, I found example Gene: Nav1 ENSMUSG00000090399 and Gene: Nav1 - ENSMUSG00000009418. So fundamentally I will chose 'gene id' as unique not 'gene name'
+
+
+
+###Window Analysis.
+
+File Name: Window_Analysis_Chr1.csv
+
+The file contains a row corresponding to a window in the genes in chr1. The rows in each gene are sorted (in descending order) based on max_snp_cmh_neg_log and mean_snp_cmh_neg_log. So if there are two rows with same max cmh value then the row with the higher mean cmh value is preffered. 
+
+The Features are
+
+- snp_count = number of snps in that window
+- max_snp_cmh_neg_log = the max value of the P-Values 
+- min_snp_cmh_neg_log = 
+- mean_snp_cmh_neg_log = 
+- sd_snp_cmh_neg_log = 
+- median_snp_cmh_neg_log = 
+- gene_id = 
+- gene_name = 
+- window_index = 
+
+
+
+
+
+
+
+Processing:
+
+- String processing is done to remove gene_name and gene_id from the gene_id and gene_name columns in snpsInFeatures data. Trimming is performed.
+- 
