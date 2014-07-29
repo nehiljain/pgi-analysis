@@ -160,10 +160,7 @@ windowAnalysisPerChromosome <- function(inputFileName, outFilename) {
 #             cat("After:: windowStart = ", windowStart, "windowEnd = ", windowEnd, "windowCounter = ", windowCounter, "windowlength", windowLength, "\n")
             
         }
-        if (file.exists(outFilename) == TRUE) {
-            write.table(finalGeneDf, file = outFilename, quote=F, sep = ",", append = T,  col.names = FALSE, row.names= FALSE)
-        }  else {
-            write.table(finalGeneDf, file = outFilename, quote=F, sep = ",", col.names = TRUE, row.names= FALSE)
+
         finalGeneDf <- finalGeneDf %.%
             arrange(desc(max_snp_cmh_neg_log), desc(mean_snp_cmh_neg_log))  %.%
             filter(window_index != 0)
@@ -175,9 +172,9 @@ windowAnalysisPerChromosome <- function(inputFileName, outFilename) {
         #   print(names(finalGeneDf))
         
         if (file.exists(outFilename) == TRUE) {
-            write.table(finalGeneDf, file = paste("sorted_",outFilename, sep=""), quote=F, sep = ",", append = T,  col.names = FALSE, row.names= FALSE)
+            write.table(finalGeneDf, file = outFilename, quote=F, sep = ",", append = T,  col.names = FALSE, row.names= FALSE)
         }  else {
-            write.table(finalGeneDf, file = paste("sorted_",outFilename, sep=""), quote=F, sep = ",", col.names = TRUE, row.names= FALSE)
+            write.table(finalGeneDf, file = outFilename, quote=F, sep = ",", col.names = TRUE, row.names= FALSE)
         }
         
         rm(windowStart,windowEnd,geneDf,finalGeneDf )
@@ -190,15 +187,15 @@ windowAnalysisPerChromosome <- function(inputFileName, outFilename) {
 # Real Work
 
 # required by user
-outPrefix <- "chr1"
-outFilename <- "~/coderepo/pgi-ngs-analysis/data/final/Window_Analysis_Chr1.csv"
-# Name iof the input file
-inputDirPath <- "something which holds all all files with reference features and snps found in them"
-inputFileName <- "~/coderepo/pgi-ngs-analysis/data/final/SNPS_IN_FEATURES.csv"
-
-
-# example call to function
-windowAnalysisPerChromosome(inputFileName=inputFileName, outFilename=outFilename )
+# outPrefix <- "chr1"
+# outFilename <- "~/coderepo/pgi-ngs-analysis/data/final/Window_Analysis_Chr1.csv"
+# # Name iof the input file
+# inputDirPath <- "something which holds all all files with reference features and snps found in them"
+# inputFileName <- "~/coderepo/pgi-ngs-analysis/data/final/SNPS_IN_FEATURES.csv"
+# 
+# 
+# # example call to function
+# windowAnalysisPerChromosome(inputFileName=inputFileName, outFilename=outFilename )
 
 
 
@@ -228,10 +225,10 @@ for ( i in 1:19) {
         str_locate(inputFileNamesList,
                    pattern=paste("chr",i,"_SNPS_IN_FEATURES_DATA",  sep="")))]
     inputFileName <- paste(inputDirPath, snpsInFeatureFileName, sep="")
-    outputFileName <- paste(outputDirPath,"chr",i,"_all-windows-analysis.csv", sep="")
+    outputFileName <- paste(outputDirPath,"chr",i,"_all-windows-sorted.csv", sep="")
     cat(" snpsInFeatureFileName : ",inputFileName, " output : ", outputFileName,"\n\n")
     # print(gwasFileName)
-    windowAnalysisPerChromosome(inputFileName=inputFileName, outFilename=outFilename )
+    windowAnalysisPerChromosome(inputFileName=inputFileName, outFilename=outputFileName )
 }
 
 
