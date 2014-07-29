@@ -21,7 +21,7 @@ removeGeneNameTag <- function(row) {
 removeGeneIdTag <- function(row) {
   s <- as.character(row)
   gene_id_loc <- str_locate(s, "gene_id ")
-  print(gene_id_loc)
+#   print(gene_id_loc)
   if (!is.na(gene_id_loc[1])) {
       return(str_trim(str_sub(s, start = gene_id_loc[2])))  
   }
@@ -46,12 +46,14 @@ windowAnalysisPerChromosome <- function(inputFileName, outFilename) {
     if (file.exists(outFilename) == TRUE) {
         file.remove(outFilename)
     }
+    cat("going to read the file\n\n")
     refDf <- read.csv(inputFileName, stringsAsFactors = F, row.names=NULL, header = T)
+    refDf <- filter(refDf, feature == "gene")
     refDf$start <- as.numeric(refDf$start)
     refDf$end <- as.numeric(refDf$end)
     refDf$snp_p_value <- as.numeric(refDf$snp_p_value)
     refDf$snp_p_value <- -1 * log(refDf$snp_p_value)
-    refDf <- ddply(refDf, .(start, end, attributes), transform, 
+    refDf <- ddply(refDf, .(snp_name, snp_p_value, gene_id, gene_name ), transform, 
                             gene_id = removeGeneIdTag(gene_id),
                             gene_name = removeGeneNameTag(gene_name),
                             gene_biotype = removeGeneBiotypeTag(gene_biotype))
@@ -60,10 +62,11 @@ windowAnalysisPerChromosome <- function(inputFileName, outFilename) {
     refDf$gene_biotype <- as.factor(refDf$gene_biotype)
     refDf <- tbl_df(refDf)
     
+#     cat("refDf ready :: ",str(refDf))
     geneDfList <- dlply(filter(refDf, feature == "gene"),
-                        .(gene_id, gene_name))
+                        .(gene_id))
     
-    
+    cat("geneDfList :: ",length(geneDfList))
     # Constants
     windowLength <- 7500
     windowIncrement <- 2500
@@ -71,17 +74,25 @@ windowAnalysisPerChromosome <- function(inputFileName, outFilename) {
     
     for (i  in 1:length(geneDfList)[]) {
         geneDf <- geneDfList[[i]]
-        cat("gene name = ",geneDf$gene_name[1] ,
-            "i = ", i, "\n")
+        geneDf$gene_name <- as.character(geneDf$gene_name)
+        geneDf$gene_id <- as.character(geneDf$gene_id)
+        removeGeneIdTag(geneDf$gene_id)
+#             cat(" <=== geneDf ---:: ",levels(geneDf$gene_id), "<---\n\n\n")
+        if (as.character(geneDf$gene_name)[1] %in% c("Gm4954",  "Sema4c",  "Tmem14a")) {
+            cat("gene name = ",str(as.character(geneDf$gene_name[1])),
+                "i = ", i, "\n", str(geneDf))
+            
+        }
+#         cat("gene name = ",str(as.character(geneDf$gene_name)[1]),"i = ", i, "\n")
         lastWindow <- F
         windowStart <- geneDf$start[1]
         if((floor(geneDf$end[1])) - windowStart < 7500) {
             windowLength <- (floor(geneDf$end[1])) - windowStart
         }
         windowEnd <- windowStart + windowLength
-        cat("Before:: windowStart = ", windowStart, "windowEnd = ", windowEnd, "windowlength", windowLength, "\n")
-        #   str(geneDf)
-        
+#         if (!is.na(intersect(geneDf$gene_name, c("Gm4954",  "Sema4c",  "Tmem14a")))) {
+#             cat("Before:: windowStart = ", windowStart, "windowEnd = ", windowEnd, "windowlength", windowLength, "\n")
+#         }
         numberOfRows <- length(geneDf$gene_id)
         finalGeneDf <- data.frame(
             snp_count = numeric(length=numberOfRows),
@@ -113,8 +124,11 @@ windowAnalysisPerChromosome <- function(inputFileName, outFilename) {
                 windowAnalysisDf$gene_length = geneDf$end[1] - geneDf$start[1]
                 windowAnalysisDf$window_index = windowCounter
             } else {
-                cat("No SNPS gene name = ",geneDf$gene_name[1] ,
-                    "i = ", i, "\n", "NO SNPS")  
+#                 if  (as.character(geneDf$gene_name)[1] %in% c("Gm4954",  "Sema4c",  "Tmem14a")) {
+#                     cat("No SNPS gene name = ",geneDf$gene_name[1] ,
+#                         "i = ", i, "\n", "NO SNPS")  
+#                 }
+                
                 windowAnalysisDf <- data.frame(
                     snp_count = 0,
                     max_snp_cmh_neg_log = 0,
@@ -130,8 +144,11 @@ windowAnalysisPerChromosome <- function(inputFileName, outFilename) {
             }
             
             finalGeneDf[windowCounter,] =  windowAnalysisDf[1,]
-            
-            
+
+            if  (as.character(finalGeneDf[windowCounter,"gene_name"])[1] %in% c("Gm4954",  "Sema4c",  "Tmem14a")) {
+                cat("FINALLLLLL No SNPS gene name = ",str(windowAnalysisDf[1,]) ,
+                    "i = ", i, "\n", "NO SNPS")  
+            }
             windowStart <- windowStart + windowIncrement
             windowLength <- 7500
             if((floor(geneDf$end[1])) - windowStart < 7500) {
@@ -140,13 +157,17 @@ windowAnalysisPerChromosome <- function(inputFileName, outFilename) {
             }
             windowEnd <- windowStart + windowLength
             windowCounter <- windowCounter + 1
-            cat("After:: windowStart = ", windowStart, "windowEnd = ", windowEnd, "windowCounter = ", windowCounter, "windowlength", windowLength, "\n")
+#             cat("After:: windowStart = ", windowStart, "windowEnd = ", windowEnd, "windowCounter = ", windowCounter, "windowlength", windowLength, "\n")
             
         }
+        if (file.exists(outFilename) == TRUE) {
+            write.table(finalGeneDf, file = outFilename, quote=F, sep = ",", append = T,  col.names = FALSE, row.names= FALSE)
+        }  else {
+            write.table(finalGeneDf, file = outFilename, quote=F, sep = ",", col.names = TRUE, row.names= FALSE)
         finalGeneDf <- finalGeneDf %.%
             arrange(desc(max_snp_cmh_neg_log), desc(mean_snp_cmh_neg_log))  %.%
             filter(window_index != 0)
-        
+#         print(str(finalGeneDf))
         windowStart <- 0
         windowEnd <- 0
         windowLength <- 7500
@@ -154,9 +175,9 @@ windowAnalysisPerChromosome <- function(inputFileName, outFilename) {
         #   print(names(finalGeneDf))
         
         if (file.exists(outFilename) == TRUE) {
-            write.table(finalGeneDf, file = outFilename, quote=F, sep = ",", append = T,  col.names = FALSE, row.names= FALSE)
+            write.table(finalGeneDf, file = paste("sorted_",outFilename, sep=""), quote=F, sep = ",", append = T,  col.names = FALSE, row.names= FALSE)
         }  else {
-            write.table(finalGeneDf, file = outFilename, quote=F, sep = ",", col.names = TRUE, row.names= FALSE)
+            write.table(finalGeneDf, file = paste("sorted_",outFilename, sep=""), quote=F, sep = ",", col.names = TRUE, row.names= FALSE)
         }
         
         rm(windowStart,windowEnd,geneDf,finalGeneDf )
@@ -182,47 +203,107 @@ windowAnalysisPerChromosome(inputFileName=inputFileName, outFilename=outFilename
 
 
 
+cat("Starting Analysis of Window Analysis with Genes \n\n")
+
+## Real work happening here.
+
+outputDirPath = "/share/volatile_scratch/nehil/sliding-window-analysis/"
+inputDirPath <- "/share/volatile_scratch/nehil/gene-analysis/"
+
+cat("Paths \n outputDirPath = ", outputDirPath, " inputDirPath = ", inputDirPath, "\n")
+
+# run all chromosomes function
+
+
+inputFileNamesList <- list.files(path=inputDirPath, pattern=".csv", ignore.case = T)
+
+cat("List of inputFileNames\n")
+print(inputFileNamesList)
 
 
 
-# Random stuff
-
-windowDf <- read.csv("~/coderepo/pgi-ngs-analysis/data/final/Window_Analysis_Chr1.csv")
-allDf <- read.csv("~/coderepo/pgi-ngs-analysis/data/final/SNPS_IN_FEATURES.csv")
-allDf <- read.csv("~/coderepo/pgi-ngs-analysis/data/final/SNPS_IN_FEATURES.csv")
-
-
-windowGeneIDList <- levels(windowDf$gene_id)
-allGeneIDList <- levels(allDf$gene_id)
-allGeneList <- levels(allDf$gene_name)
-windowGeneList <- levels(windowDf$gene_name)
-
-allGeneIDList <- laply(allGeneIDList, function(row) {
-    print(row)
-    removeGeneIdTag(row)
-})
-windowGeneIDList <- laply(windowGeneIDList, function(row) {
-    print(row)
-    removeGeneIdTag(row)
-})
-
-allGeneNameList <- laply(allGeneList, function(row) {
-    print(row)
-    removeGeneNameTag(row)
-})
-windowGeneList <- laply(windowGeneList, function(row) {
-    print(row)
-    removeGeneNameTag(row)
-})
-
-intersect(allGeneIDList, windowGeneIDList)
-setdiff(allGeneIDList,windowGeneIDList)
-str(windowGeneIDList)
+for ( i in 1:19) {
+    cat("iteration ::",i)
+    snpsInFeatureFileName <- inputFileNamesList[complete.cases(
+        str_locate(inputFileNamesList,
+                   pattern=paste("chr",i,"_SNPS_IN_FEATURES_DATA",  sep="")))]
+    inputFileName <- paste(inputDirPath, snpsInFeatureFileName, sep="")
+    outputFileName <- paste(outputDirPath,"chr",i,"_all-windows-analysis.csv", sep="")
+    cat(" snpsInFeatureFileName : ",inputFileName, " output : ", outputFileName,"\n\n")
+    # print(gwasFileName)
+    windowAnalysisPerChromosome(inputFileName=inputFileName, outFilename=outFilename )
+}
 
 
-a <- c("a","b")
-b <- c("b","c", "a")
-setdiff(a,b)
 
 
-str_locate_all(windowGeneIDList, pattern="ENSMUSG00000099032")
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+# 
+# # Random stuff
+# 
+# windowDf <- read.csv("~/coderepo/pgi-ngs-analysis/data/final/Window_Analysis_Chr1.csv")
+# allDf <- read.csv("~/coderepo/pgi-ngs-analysis/data/final/SNPS_IN_FEATURES.csv")
+# allDf <- read.csv("~/coderepo/pgi-ngs-analysis/data/final/SNPS_IN_FEATURES.csv")
+# 
+# 
+# windowGeneIDList <- levels(windowDf$gene_id)
+# allGeneIDList <- levels(allDf$gene_id)
+# allGeneList <- levels(allDf$gene_name)
+# windowGeneList <- levels(windowDf$gene_name)
+# 
+# allGeneIDList <- laply(allGeneIDList, function(row) {
+#     print(row)
+#     removeGeneIdTag(row)
+# })
+# windowGeneIDList <- laply(windowGeneIDList, function(row) {
+#     print(row)
+#     removeGeneIdTag(row)
+# })
+# 
+# allGeneNameList <- laply(allGeneList, function(row) {
+#     print(row)
+#     removeGeneNameTag(row)
+# })
+# windowGeneNameList <- laply(windowGeneList, function(row) {
+#     print(row)
+#     removeGeneNameTag(row)
+# })
+# 
+# intersect(allGeneIDList, windowGeneIDList)
+# setdiff(allGeneIDList,windowGeneIDList)
+# str(windowGeneIDList)
+# 
+# 
+# a <- c("a","b")
+# b <- c("b","c", "a")
+# setdiff(a,b)
+# 
+# 
+# str_locate_all(windowGeneIDList, pattern="ENSMUSG00000099032")
