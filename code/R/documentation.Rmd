@@ -1,65 +1,106 @@
-Gene Meta Analysis
+Gene Analysis
 ========================================================
 
-This is an R Markdown document. This is to document all the analysis done and the explaination of the attributes of ach data table created.
-
-Input:
-
-###Snps found in features. 
-
-File Name : "SNPS_IN_FEATURES.csv"
-
-```{r}
-library(ggplot2)
-snpsInFeatures <- read.csv("~/coderepo/pgi-ngs-analysis/data/final/SNPS_IN_FEATURES.csv", nrows=1 stringsAsFactors = F, row.names=NULL, header = T)
-
-snpsInFeatures$gene_name <- as.factor(snpsInFeatures$gene_name)
-snpsInFeatures$gene_id <- as.factor(snpsInFeatures$gene_id)
-snpsInFeatures <- snpsInFeatures[ , -which(names(snpsInFeatures) %in% c("attributes"))]
-
-head(snpsInFeatures)
-
-```
-
-The number of gene names and gene ids in this file are 
-
-```{r}
-
-str(snpsInFeatures$gene_id)
-str(snpsInFeatures$gene_name)
-
-```
+This is to document all the analysis done and the explaination of the attributes of each data table created.
 
 
-In trying to identify the duplication of genes, I found example Gene: Nav1 ENSMUSG00000090399 and Gene: Nav1 - ENSMUSG00000009418. So fundamentally I will chose 'gene id' as unique not 'gene name'
+Genes Ranking Table
+=========================
+
+2 Types of data files are used for analysis.
+
+1. reference file with snps in features for a particular chromosome. 
+2. window analysis of the chromsome
 
 
+# 1 - OverallGenesInfo is extracted from Snps in Features
 
-###Window Analysis.
+- All 'gene_id', 'gene_name', 'gene_biotypes' are processed to remove and strip down unwanted characters
+- The Snp P values are converted to -log(P-Values)
+- The file is filtered for entries with Genes only.
+This data is also stored separately for further references and reduction in the overhead of such calculations repeatedly
 
-File Name: Window_Analysis_Chr1.csv
-
-The file contains a row corresponding to a window in the genes in chr1. The rows in each gene are sorted (in descending order) based on max_snp_cmh_neg_log and mean_snp_cmh_neg_log. So if there are two rows with same max cmh value then the row with the higher mean cmh value is preffered. 
-
-The Features are
-
-- snp_count = number of snps in that window
-- max_snp_cmh_neg_log = the max value of the P-Values 
-- min_snp_cmh_neg_log = 
-- mean_snp_cmh_neg_log = 
-- sd_snp_cmh_neg_log = 
-- median_snp_cmh_neg_log = 
-- gene_id = 
-- gene_name = 
-- window_index = 
+- Max CMH P-Value is calculated from the GeneWise grouping of the data
+- For each number of SNPS in the gene are calculated
+- Unwanted Columns are stripped down
+- Gene length column is added. gene Length = end - start
 
 
 
 
+# 2 - Window Analysis
+
+The data is divided in to groups by gene_id
+
+For each group:
+
+- We find the rows with Max(Max CMH P Values), Max(Mean CMH P Values), Max(SNP Count).
+	- For each max of all the windows we store the snp count of the selected window, max p-value of the max snp in the selected window, mean of p-value for that window, standard deviation of p-values for that window. The naming of the columns is done in following fashion.
+	For Max(Max CMH P Values) the columns are:
+	"max_max_snp_count","max_max_pvalue","max_max_mean_pvalue","max_max_sd_pvalue",
+	For Max(Mean CMH P Values) the columns are:
+	"max_mean_snp_count","max_mean_pvalue","max_mean_mean_pvalue","max_mean_sd_pvalue",
 
 
 
-Processing:
+OutPut File has Columns:
 
-- String processing is done to remove gene_name and gene_id from the gene_id and gene_name columns in snpsInFeatures data. Trimming is performed.
-- 
+19 files for all chromosomes from 1-19.
+File name Pattern : "chr1 gene info.csv", "chr2 gene info.csv" ... so on
+
+- "chromosome.no" : Chromosome Number
+- "gene id" : Gene ID
+- "gene name" :  Gene Name
+- "total number of snps in gene" :  Number Of all the SNPs in whole gene
+- "gene length" : End - Start Location of Gene
+- "max cmh neg log" : OverAll max CMH Pvalue dervied from the ref. database before Window Analysis. This should be the same as "max max pvalue". It is more of a sanity check column.
+- "gene biotype" : The Biotype extracted from the attributes of the gene from the GTF File
+- "source" : Source column from the GTF File
+- "feature" : Feature column from the GTF File
+- "max max snp count" : As described in Window Analysis section
+- "max max pvalue" : As described in Window Analysis section
+- "max max mean pvalue" : As described in Window Analysis section
+- "max max sd pvalue" : As described in Window Analysis section
+- "max mean snp count" : As described in Window Analysis section
+- "max mean pvalue" : As described in Window Analysis section
+- "max mean mean pvalue" : As described in Window Analysis section
+- "max mean sd pvalue" : As described in Window Analysis section
+- "max number of snps snp count" : As described in Window Analysis section
+- "max number of snps pvalue" : As described in Window Analysis section
+- "max number of snps mean pvalue" : As described in Window Analysis section
+- "max number of snps sd pvalue" : As described in Window Analysis section
+- "attributes" : Attributes column from the GTF File
+
+
+Rows with 1 Gene has standard deviations = NA
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

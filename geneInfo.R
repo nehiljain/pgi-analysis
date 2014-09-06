@@ -15,7 +15,15 @@ replaceNAs <- function (row) {
     if (is.na(row$max_max_snp_count)) {
         if (row$total_number_of_snps_in_gene == 1) {
             row$max_max_snp_count = row$total_number_of_snps_in_gene
-            row$max_max_pvalue = row$max_cmh_neg_log
+            row$max_mean_snp_count = row$total_number_of_snps_in_gene
+	    row$max_number_of_snps_snp_count = row$total_number_of_snps_in_gene
+	    row$max_max_pvalue = row$max_cmh_neg_log
+	    row$max_max_mean_pvalue = row$max_cmh_neg_log
+	    row$max_mean_mean_pvalue = row$max_cmh_neg_log
+            row$max_mean_pvalue = row$max_cmh_neg_log
+	    row$max_number_of_snps_pvalue = row$max_cmh_neg_log
+	    row$max_number_of_snps_mean_pvalue = row$max_cmh_neg_log
+	   
         }
         else {
             row$max_max_snp_count = -1000
@@ -27,28 +35,26 @@ replaceNAs <- function (row) {
 removeGeneNameTag <- function(row) {
     
     s <- as.character(row)
-#     print(s)
+    print(s)
     gene_name_loc <- str_locate(s, "gene_name ")
     if (!is.na(gene_name_loc[1])) {
-#         print(gene_name_loc,s)
         return(str_trim(str_sub(s, start = gene_name_loc[2])))  
     }
-    
+#     print(s)
     return(str_trim(s))
     
 }
 
 removeGeneIdTag <- function(row) {
     s <- as.character(row)
-    print(s)
+#     print(s)
     gene_id_loc <- str_locate(s, "gene_id ")
-    
+    #   print(gene_id_loc)
     if (!is.na(gene_id_loc[1])) {
-#         print(gene_id_loc)
         return(str_trim(str_sub(s, start = gene_id_loc[2])))  
     }
     
-    print(row)
+    print(gene_id_loc)
     return(str_trim(row))
     
     
@@ -57,7 +63,7 @@ removeGeneIdTag <- function(row) {
 removeGeneBiotypeTag <- function(row) {
       
     s <- as.character(row)
-#     print(s)
+#    print(s)
     gene_biotype_loc<- str_locate(s, "gene_biotype ")
     if (!is.na(gene_biotype_loc[1])) {
         return(str_trim(str_sub(s, start = gene_biotype_loc[2])))  
@@ -98,11 +104,11 @@ getMaxMeanRows <- function(dataframe) {
 
 getOverallGeneInfo <- function(snpGeneDf, fileName, snpsInGeneDirPath) {
     
-    
     snpGeneDf <- filter(snpGeneDf, feature == "gene")
-    snpGeneDf <- processRefData(snpGeneDf, fileName, snpsInGeneDirPath)
+    logdebug("snpGeneDf", str(snpGeneDf))
+   snpGeneDf <- processRefData(snpGeneDf, fileName, snpsInGeneDirPath)
     snpGeneDf <- tbl_df(snpGeneDf)
-    
+ 
     geneInfoDf <- filter(snpGeneDf, feature == "gene") %.%
         group_by(gene_id) %.% 
         summarise(max_cmh_neg_log = max(snp_p_value),
@@ -150,39 +156,40 @@ getWindowMaxRows <- function(windowAnalysisDf) {
 
 
 
-
-outPrefix <- "chr1" #chromosome Name
-# Name of the SNP in Gene association
-inputSnpsInFeatureFileName <- "coderepo/pgi-ngs-analysis/data/final/SNPS_IN_FEATURES.csv"
-# Name of window analysis for that chromosome.
-inputWindowFileName <- "coderepo/pgi-ngs-analysis/data/sliding-window-analysis2/chr1_all-windows-sorted.csv"
-# name of outfile with all the geneInfo will be created automatically
-outputFileName <- paste("coderepo/pgi-ngs-analysis/data/final/",outPrefix,"_ngs_gene_info_table",".csv", sep="")
-if (file.exists(outputFileName) == TRUE) {
-  file.remove(outputFileName)
-}
-
-snpGeneDf <- read.csv(inputSnpsInFeatureFileName, stringsAsFactors = F, row.names=NULL, header = T, nrow=1000)
-logdebug("snpGeneDf", str(snpGeneDf))
+# 
+# outPrefix <- "chr1" #chromosome Name
+# # Name of the SNP in Gene association
+# inputSnpsInFeatureFileName <- "coderepo/pgi-ngs-analysis/data/final/SNPS_IN_FEATURES.csv"
+# # Name of window analysis for that chromosome.
+# inputWindowFileName <- "coderepo/pgi-ngs-analysis/data/sliding-window-analysis2/chr1_all-windows-sorted.csv"
+# # name of outfile with all the geneInfo will be created automatically
+# outputFileName <- paste("coderepo/pgi-ngs-analysis/data/final/",outPrefix,"_ngs_gene_info_table",".csv", sep="")
+# if (file.exists(outputFileName) == TRUE) {
+#   file.remove(outputFileName)
+# }
+# 
+# snpGeneDf <- read.csv(inputSnpsInFeatureFileName, stringsAsFactors = F, row.names=NULL, header = T, nrow=5000)
+# logdebug("snpGeneDf", str(snpGeneDf))
+# #     
+# #     
+# outputGeneInfoDf <- getOverallGeneInfo(snpGeneDf, "inputSnpsInFeatureFileName.csv","~/coderepo/pgi-ngs-analysis/data/inputSnpGeneDirPath")
+# #     
+# windowAnalysisDf <- read.csv(inputWindowFileName, stringsAsFactors = F, row.names=NULL, header = T, nrow=5000)
+# logdebug("windowAnalysisDf", str(windowAnalysisDf))
+# geneInfoFromWindowData <- getWindowMaxRows(windowAnalysisDf)
+# 
+# finalDf <- merge(x = outputGeneInfoDf, y = geneInfoFromWindowData, by = "gene_id", all.x = T )
+# 
+# finalDf <- ddply(finalDf, .(gene_id), function(row) {
+#     return(replaceNAs(row))
+# } )
 #     
-#     
-outputGeneInfoDf <- getOverallGeneInfo(snpGeneDf, "inputSnpsInFeatureFileName.csv","~/coderepo/pgi-ngs-analysis/data/inputSnpGeneDirPath")
-#     
-windowAnalysisDf <- read.csv(inputWindowFileName, stringsAsFactors = F, row.names=NULL, header = T, nrow=5000)
-logdebug("windowAnalysisDf", str(windowAnalysisDf))
-geneInfoFromWindowData <- getWindowMaxRows(windowAnalysisDf)
-
-finalDf <- merge(x = outputGeneInfoDf, y = geneInfoFromWindowData, by = "gene_id", all.x = T )
-
-finalDf <- ddply(finalDf, .(gene_id), function(row) {
-    return(replaceNAs(row))
-} )
-    
+outputDirPath = 
 
 #  Paths required# 
-inputWindowDirPath = "/share/volatile_scratch/nehil/sliding-window-analysis/"
-inputSnpGeneDirPath <- "/share/volatile_scratch/nehil/gene-analysis/"
-outputGeneInfoDirPath <- "/share/volatile_scratch/nehil/gene-info/"
+inputWindowDirPath = "coderepo/pgi-ngs-analysis/data/"
+inputSnpGeneDirPath <- "coderepo/pgi-ngs-analysis/data/final/"
+outputGeneInfoDirPath <- "coderepo/pgi-ngs-analysis/data/"
 
 logdebug("Paths \n inputWindowDirPath = ", print(inputWindowDirPath), " inputSnpGeneDirPath = ", print(inputSnpGeneDirPath), "\n")
 
@@ -196,7 +203,7 @@ print(inputSnpGeneFileNames)
 
 
 
-for ( i in 1:19) {
+for ( i in c("X","Y")) {
     cat("iteration ::",i)
     snpsInFeatureFileName <- inputSnpGeneFileNames[complete.cases(
         str_locate(inputSnpGeneFileNames,
@@ -217,7 +224,7 @@ for ( i in 1:19) {
     logdebug("snpGeneDf", str(snpGeneDf))
 #     
 #     
-    outputGeneInfoDf <- getOverallGeneInfo(snpGeneDf, inputSnpsInFeatureFileName,inputSnpGeneDirPath)
+    outputGeneInfoDf <- getOverallGeneInfo(snpGeneDf, snpsInFeatureFileName ,inputSnpGeneDirPath)
 #     
     windowAnalysisDf <- read.csv(inputWindowFileName, stringsAsFactors = F, row.names=NULL, header = T)
     logdebug("windowAnalysisDf", str(windowAnalysisDf))
@@ -227,15 +234,14 @@ for ( i in 1:19) {
     finalDf <- ddply(finalDf, .(gene_id), function(row) {
         return(replaceNAs(row))
     } )
-#     
-#     
-#     outputGeneInfoDf <- ddply(outputGeneInfoDf, .(gene_id), transform, 
-#                               max_window_snp_count = replaceNASnpCount(total_number_of_snps_in_gene, number_of_snps_in_window))
+    
+    columnsToBeSelected <- c("chromosome.no","gene_id", "gene_name", "total_number_of_snps_in_gene","gene_length", "max_cmh_neg_log","gene_biotype","source","feature" ,"max_max_snp_count"   ,"max_max_pvalue" ,"max_max_mean_pvalue" ,"max_max_sd_pvalue"   ,"max_mean_snp_count"  ,"max_mean_pvalue" ,"max_mean_mean_pvalue","max_mean_sd_pvalue"  ,"max_number_of_snps_snp_count" ,"max_number_of_snps_pvalue" ,"max_number_of_snps_mean_pvalue" ,"max_number_of_snps_sd_pvalue", "attributes" ) 
+    finalDf <- finalDf[,columnsToBeSelected]   
 
-#     
+
     write.csv(finalDf, file = outputFileName, quote=F, row.names = FALSE)
 #     
-    
+  
 }
 
 
@@ -244,3 +250,4 @@ for ( i in 1:19) {
 # 
 # 
 # 
+

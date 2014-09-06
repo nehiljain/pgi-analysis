@@ -204,8 +204,8 @@ cat("Starting Analysis of Window Analysis with Genes \n\n")
 
 ## Real work happening here.
 
-outputDirPath = "/share/volatile_scratch/nehil/sliding-window-analysis/"
-inputDirPath <- "/share/volatile_scratch/nehil/gene-analysis/"
+outputDirPath = "coderepo/pgi-ngs-analysis/data/"
+inputDirPath <- "coderepo/pgi-ngs-analysis/data/final/"
 
 cat("Paths \n outputDirPath = ", outputDirPath, " inputDirPath = ", inputDirPath, "\n")
 
@@ -219,7 +219,7 @@ print(inputFileNamesList)
 
 
 
-for ( i in 1:19) {
+for ( i in c("X","Y")) {
     cat("iteration ::",i)
     snpsInFeatureFileName <- inputFileNamesList[complete.cases(
         str_locate(inputFileNamesList,
@@ -230,75 +230,3 @@ for ( i in 1:19) {
     # print(gwasFileName)
     windowAnalysisPerChromosome(inputFileName=inputFileName, outFilename=outputFileName )
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-# 
-# # Random stuff
-
-windowDf <- read.csv("~/coderepo/pgi-ngs-analysis/data/sliding-window-analysis2/chr1_all-windows-sorted.csv")
-allDf <- read.csv("~/coderepo/pgi-ngs-analysis/data/final/chr2_SNPS_IN_FEATURES_DATA.csv", row.names=NULL)
-
-
-windowGeneIDList <- levels(windowDf$gene_id)
-allGeneIDList <- levels(allDf$gene_id)
-allGeneList <- levels(allDf$gene_name)
-windowGeneList <- levels(windowDf$gene_name)
-
-allGeneIDList <- laply(allGeneIDList, function(row) {
-    print(row)
-    removeGeneIdTag(row)
-})
-windowGeneIDList <- laply(windowGeneIDList, function(row) {
-    print(row)
-    removeGeneIdTag(row)
-})
-
-allGeneNameList <- laply(allGeneList, function(row) {
-    print(row)
-    removeGeneNameTag(row)
-})
-windowGeneNameList <- laply(windowGeneList, function(row) {
-    print(row)
-    removeGeneNameTag(row)
-})
-
-intersect(allGeneIDList, windowGeneIDList)
-setdiff(allGeneIDList,windowGeneIDList)
-str(windowGeneIDList)
-setdiff(allGeneNameList, windowGeneList)
-a <- c("a","b")
-b <- c("b","c", "a")
-setdiff(a,b)
-
-
-someProb3 <- allDf[grep(allDf$gene_id, pattern="ENSMUSG00000025933"),]
