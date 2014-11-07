@@ -184,7 +184,6 @@ getWindowMaxRows <- function(windowAnalysisDf) {
 #     return(replaceNAs(row))
 # } )
 #     
-outputDirPath = 
 
 #  Paths required# 
 inputWindowDirPath = "coderepo/pgi-ngs-analysis/data/"
