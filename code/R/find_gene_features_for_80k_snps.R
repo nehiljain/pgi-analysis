@@ -1,13 +1,13 @@
 #!/usr/bin/env Rscript
 
-
+# Example Call Rscript filename.R  lhgvDirpath refGeneIdFilename outputDirPath
 # find SNPS in Gene Features
 # Take in Two aguments directory of
 #   - SNP split chromosome wise with columns snp_id, loc
 #   - GENE reference csv file
 # Assumes that Gene reference file is processed and is a csv file with gene id and corresponding tables
 # all paths are absolute
-# example call ./
+
 
 rm(list=ls())
 library(plyr)
@@ -24,10 +24,10 @@ outputDirPath <- NULL
 
 
 for (i in 1:length(cmdArguments)) {
-    print(paste("arg",as.character(i),"=",arguments[i]))
+    print(paste("arg",as.character(i),"=",cmdArguments[i]))
     outputDirPath = cmdArguments[3]
-    refGeneIdFilename <- cmdArcmdArguments[2]
-    lhgvDirpath <- cmdArcmdArguments[1] 
+    refGeneIdFilename <- cmdArguments[2]
+    lhgvDirpath <- cmdArguments[1] 
 }
 
 
@@ -48,7 +48,7 @@ chromosomeList <- c(1:19, "X", "Y")
 findFeatureFor80kSnps <- function(lhgvFileName, chromosome_number, outputDirPath) {
     
     cat("Dimesnions of Input Data frames", "Feature Dataset", dim(refGeneIdData), "Snps Dataset", dim(lhgvFileName), "\n\n")    
-    outFilename <- paste(outputDirPath,"/" ,chromosome_number, "_80k_snps_in_gene_features",".csv", sep="")
+    outFilename <- paste(outputDirPath, chromosome_number, "_80k_snps_in_gene_features",".csv", sep="")
     
     # Clearing the old version of the filess
     cat("outFilename",outFilename )

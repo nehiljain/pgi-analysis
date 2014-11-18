@@ -2,9 +2,7 @@ rm(list=ls())
 
 library(plyr)
 library(dplyr)
-library(ggplot2)
 library(stringr)
-library(xlsx)
 library(rattle)
 
 # This script loads the GTF file for mouse, creates a header, munges the strings to be made useful, converts to a dataframe and writes it to RData and CSV Files
@@ -32,6 +30,7 @@ colClassNames <- c("character", "factor", "factor", "integer", "integer", "chara
 gtfData <- read.table(file = gtfFilePath,
                       header = FALSE,
                       comment.char = "#",
+                      nrow = 1000,
                       na.strings = "NA",
                       fill = TRUE,
                       sep = "\t",
@@ -98,12 +97,29 @@ resultGtfData <- cbind(gtfData, formattedAttributes)
 
 str(resultGtfData)
 
+names(resultGtfData) <- normVarNames(names(resultGtfData))
+
 save(resultGtfData, file = "mouse_gtf.RData")
+write.csv(resultGtfData, file = "mouse_gtf.csv",
+          quote = FALSE, na = "NA", row.names = FALSE)
 
 
-write.csv(resultGtfData, file = "mouse_gtf.RData", append = FALSE,
-          quote = FALSE, na = "NA", row.names = FALSE,
-          col.names = TRUE)
+
+refGeneIdData <- read.csv(, file = "Downloads/mouse_gene_list-NCBIM37.67-mm9.txt",
+                          header = TRUE,
+                          comment.char = "#",
+                          na.strings = "NA",
+                          fill = TRUE)
+
+
+names(refGeneIdData) <- normVarNames(names(refGeneIdData))
+save(refGeneIdData, file = "mouse_gene_list_mm9.RData")
+write.csv(refGeneIdData, file = "mouse_gene_list_mm9.csv",
+          quote = FALSE, na = "NA", row.names = FALSE)
+
+write.csv(refGeneIdData[, 1], file = "test_mouse_gene_list_mm9.csv",
+          quote = FALSE, na = "NA", row.names = FALSE)
+
 
 
 
