@@ -105,7 +105,7 @@ samtools mpileup -B -Q 20 -q 20 -r 1 \
 
 date
 echo
-echo "picard popoolation2/mpileup2sync"
+echo "pic popoolation2/mpileup2sync"
 echo
 
 java -Xmx8g -jar /home/kzukowski/soft/popoolation2_1201/mpileup2sync.jar \
