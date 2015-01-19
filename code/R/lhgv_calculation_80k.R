@@ -37,11 +37,11 @@ for (i in 1:length(cmdArguments)) {
 
 
 findTopSnpAndSnpStats <- function (snpGeneFilename) {
-
+    print(snpGeneFilename)
     snpGeneDataframe = read.csv(file = snpGeneFilename, header = TRUE)
     snpGeneDataframe$snp_id <- as.character(snpGeneDataframe$snp_id)
     resultDataframe = ddply(snpGeneDataframe, .(ensembl_gene_id), function(genewiseDataframe) {
-        print(dim(genewiseDataframe))
+
         result = as.data.frame(genewiseDataframe[1, c(1:5)])
         max_lhi_snp <- arrange(genewiseDataframe, desc(snp_lhi))[1,]
         
@@ -70,20 +70,20 @@ print(snpGeneFilenamesList)
 
 # run all chromosomes function
 for ( i in chromosomeList) {
-    cat("iteration ::",i)
+    print(i)
     snpGeneFilename <- snpGeneFilenamesList[complete.cases(
         str_locate(snpGeneFilenamesList,
-                   pattern = paste(i,"_80k_snps_in_gene.csv", sep="")))]
+                   pattern = paste("^",i, "_80k_",sep="")))]
     snpGeneFilename = paste(snpGeneDirpath, snpGeneFilename, sep="")
-    cat(" snpGeneFilename : ", snpGeneFilename,"\n\n")
+    print( snpGeneFilename)
     
-    outFilename <- paste(outputDirPath,i,"lhgv_chr.csv", sep="")
-    cat(" outFilename : ", outFilename,"\n\n")
+    outFilename <- paste(outputDirPath,"chr_",i,"_lhgv_genes.csv", sep="")
+    print(outFilename)
     
-    resultDataframe = findTopSnpAndSnpStats(snpGeneFilename)
-    tranform(resultDataframe, 
-            lhgv = 1 - (abs(gene_mid_loc - top_snp_bp) / halfWindowSize) * top_snp_lhi
-    )
-    write(resultDataframe, file = outFilename)
+    resultDataframe = findTopSnpAndSnpStats(snpGeneFilename = snpGeneFilename)
+     
+    resultDataframe$lhgv = (1 - (abs(resultDataframe$gene_mid_loc - resultDataframe$top_snp_bp) / halfWindowSize)) * resultDataframe$top_snp_lhi
+    
+    write.csv(resultDataframe, file = outFilename)
 }
 
