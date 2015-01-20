@@ -36,3 +36,8 @@ figure
 *.class
 *.project
 *.classpath
+
+
+
+# Sublime
+*.sublime*

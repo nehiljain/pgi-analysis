@@ -1,6 +1,8 @@
 #!/bin/bash
 clear
 
+
+
 echo ""
 echo "Host: `hostname`"
 echo "Login: $USER"
@@ -93,6 +95,10 @@ echo
 echo "samtools mpileup"
 echo
 
+
+
+# merge all the bam files to mpileup
+#
 ## -r 1 -> only for chr1
 
 # for 1:X,Y
@@ -103,6 +109,10 @@ samtools mpileup -B -Q 20 -q 20 -r 1 \
 >/share/volatile_scratch/kzukowski/pgi/cattle/test/data/12766.mpileup \
 2>/share/volatile_scratch/kzukowski/pgi/cattle/test/log/12766.samtools.mpileup.log
 
+
+
+
+
 date
 echo
 echo "popoolation2/mpileup2sync"
@@ -110,6 +120,7 @@ echo
 
 java -Xmx8g -jar /home/kzukowski/soft/popoolation2_1201/mpileup2sync.jar \
 --input /share/volatile_scratch/kzukowski/pgi/cattle/test/data/12766.mpileup \
+#--input next... and so on\
 --output /share/volatile_scratch/kzukowski/pgi/cattle/test/data/12766.sync \
 --fastq-type sanger \
 --min-qual 20 \
