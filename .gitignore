@@ -30,3 +30,9 @@ figure
 .Rproj
 .Rhistory
 .RData
+
+
+# JAVA
+*.class
+*.project
+*.classpath
