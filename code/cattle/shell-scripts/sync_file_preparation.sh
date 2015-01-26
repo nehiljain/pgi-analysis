@@ -104,7 +104,7 @@ echo
 # for 1:X,Y
 
 samtools mpileup -B -Q 20 -q 20 -r 1 \
--f /share/volatile_scratch/kzukowski/pgi/cattle/reference/Bos_taurus.UMD3.1.dna.toplevel.fa \
+-f /share/volatile_scratch/kzukowski/pgi/cattle/reference/
 /share/volatile_scratch/kzukowski/pgi/cattle/test/data/12766.dedup.bam \
 >/share/volatile_scratch/kzukowski/pgi/cattle/test/data/12766.mpileup \
 2>/share/volatile_scratch/kzukowski/pgi/cattle/test/log/12766.samtools.mpileup.log
