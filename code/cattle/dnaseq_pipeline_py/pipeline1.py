@@ -9,24 +9,42 @@ import subprocess
 import os
 import ruffus
 
-PICARD_DIR = "/home/kzukowski/soft/picard-tools-1.119/"
+PICARD_JAR = "/share/apps/picard/git/bin/picard.jar"
 POPOOLATION2_DIR = "/home/kzukowski/soft/popoolation2_1201/"
 CATTLE_REF_DIR = "/share/volatile_scratch/kzukowski/pgi/cattle/reference/"
 CATTLE_REF_SEQ_FILE = CATTLE_REF_DIR + "Bos_taurus.UMD3.1.dna.toplevel.fa"
 
-def run_cmd(cmd_str):
+INIT_BAM_DIR = "/share/volatile_scratch/nehil/pgi_wc/cattle/dna_seq/gq_alignment_bam/"
+
+BASE_OUT_DIR = "/share/volatile_scratch/nehil/pgi_wc/cattle/dna_seq/"
+CLEANSAM_OUT_DIR = BASE_OUT_DIR + "nehil_cleansam_bam"
+MAPQ20_OUT_DIR =   BASE_OUT_DIR + "nehil_mapq20_bam"
+
+SYNC_OUT_DIR = BASE_OUT_DIR + "nehil_samtools_mpileup/"
+SYNC_OUT_DIR = BASE_OUT_DIR + "nehil_mpileup2sync_sync/"
+
+
+def ensure_path_exists(path):
+    """If the directory does not exist it creates one.
+    """
+    if not os.path.exists(path):
+        os.makedirs(path)
+
+
+def run_cmd(cmd_str, output_log_file = open('output.log','w'),
+            error_log_file = open('error.log','w')):
     """Runs the command as given in command string.
 
     This function uses subprocess to run shell commands in cmd_str. Throws an exception if run
     command fails.
     returns stdout and stderror in a list"""
-    process = subprocess.Popen(cmd_str, stdout = subprocess.PIPE,
-                               stderr = subprocess.PIPE, shell = True)
-    stdout_str, stder_str = process.communicate()
-    if process.returncode != 0:
+
+    process_returncode = subprocess.call(cmd_str, stdout = output_log_file,
+                               stderr = error_log_file, shell = True)
+    print process_returncode
+    if process_returncode != 0:
         raise Exception("Failed to run '%s' \n %s %s Non-zero exit status %s" %
-                        (cmd_str, stdout_str, stder_str, process.returncode))
-    return [stdout_str, stder_str]
+                        (cmd_str, process_returncode))
 
 
 def picard_cleansam(input_file, output_file, log_file):
@@ -36,18 +54,23 @@ def picard_cleansam(input_file, output_file, log_file):
     :param log_file: string '12766.picard.CleanSam.log'
     :return: stderror and stdout
     """
-    cleansam_path = PICARD_DIR + "CleanSam.jar"
+
     in_file_path = ("""/share/volatile_scratch/nehil/cattle/Bos_taurus_DNAalignment_975/12766/run2332_4/12766.MPS1230"""
         """1871-B04.sorted.bam""")
-    log_file_path = "/share/volatile_scratch/kzukowski/pgi/cattle/test/log/12766.picard.CleanSam.log"
+    out_log_file_path = "/share/volatile_scratch/kzukowski/pgi/cattle/test/log/12766.picard.CleanSam.out.log"
+    err_log_file_path = "/share/volatile_scratch/kzukowski/pgi/cattle/test/log/12766.picard.CleanSam.err.log"
     out_file_path = "/share/volatile_scratch/kzukowski/pgi/cattle/test/data/12766.CleanSam.bam"
+    o_log = open(out_log_file_path, 'w')
+    e_log = open(err_log_file_path, 'w')
+    command_str = ("""java -jar {picard} CleanSam INPUT={inp} OUTPUT={outp} VALIDATION_STRINGENCY=SILENT"""
+        """CREATE_INDEX=true TMP_DIR=/tmp""".format(picard = PICARD_JAR, inp = in_file_path, outp = out_file_path))
 
-    command_str = ("""java -Xmx8g -jar {cleansam} INPUT={inp} OUTPUT={outp} VALIDATION_STRINGENCY=SILENT"""
-        """CREATE_INDEX=true TMP_DIR=/tmp""".format(cleansam = cleansam_path, inp = in_file_path, outp = out_file_path))
-
-    logs = run_cmd(command_str)
+    print(command_str)
     #write to log file
-    print(logs)
+    run_cmd(command_str, o_log, e_log)
+    o_log.close()
+    e_log.close()
+#    print(logs)
 
 
 
@@ -119,7 +142,7 @@ def popoolation2_mpileup_to_sync(input_file, output_file, log_file):
     :return:
     """
     mpileup_path = POPOOLATION2_DIR + "mpileup2sync.jar"
-    in_file_path = ("""//share/volatile_scratch/kzukowski/pgi/cattle/test/data/12766.mpileup""")
+    in_file_path = ("/share/volatile_scratch/kzukowski/pgi/cattle/test/data/12766.mpileup")
     log_file_path = "/share/volatile_scratch/kzukowski/pgi/cattle/test/log/12766.mpileup2sync.log"
     out_file_path = "/share/volatile_scratch/kzukowski/pgi/cattle/test/data/12766.sync"
 
@@ -136,9 +159,15 @@ def popoolation2_mpileup_to_sync(input_file, output_file, log_file):
 
 
 if __name__ == '__main__':
-    log = run_cmd("echo 'Test'")
+    log = run_cmd("echo 'Test'" )
     print(log)
-    print(PICARD_DIR, POPOOLATION2_DIR, CATTLE_REF_DIR, CATTLE_REF_SEQ_FILE)
+
+
+    ensure_path_exists(BASE_OUT_DIR)
+    ensure_path_exists(CLEANSAM_OUT_DIR)
+
+
+    print(PICARD_JAR, POPOOLATION2_DIR, CATTLE_REF_DIR, CATTLE_REF_SEQ_FILE)
     picard_cleansam(1,2,3)
     sys.exit(0)
 
