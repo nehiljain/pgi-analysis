@@ -14,7 +14,7 @@ POPOOLATION2_DIR = "/home/kzukowski/soft/popoolation2_1201/"
 CATTLE_REF_DIR = "/share/volatile_scratch/kzukowski/pgi/cattle/reference/"
 CATTLE_REF_SEQ_FILE = CATTLE_REF_DIR + "Bos_taurus.UMD3.1.dna.toplevel.fa"
 
-INIT_BAM_DIR = "/share/volatile_scratch/nehil/pgi_wc/cattle/dna_seq/gq_alignment_bam/"
+INIT_DIR = "/share/volatile_scratch/nehil/pgi_wc/cattle/dna_seq/gq_alignment_bam/"
 
 BASE_OUT_DIR = "/share/volatile_scratch/nehil/pgi_wc/cattle/dna_seq/"
 LOG_DIR = "/share/volatile_scratch/nehil/pgi_wc/logs/"
@@ -32,23 +32,32 @@ def ensure_path_exists(path):
         os.makedirs(path)
 
 
-def run_cmd(cmd_str, output_log_file = open('output.log','w'),
-            error_log_file = open('error.log','w')):
+def run_cmd(cmd_str, output_log_file = 'output.log',
+            error_log_file = 'error.log'):
     """Runs the command as given in command string.
 
     This function uses subprocess to run shell commands in cmd_str. Throws an exception if run
     command fails.
     returns stdout and stderror in a list"""
-
+    print "-"*100
+    print "Running Shell Command: \n\n"
+    print "cmd_str"
+    o_log = open(output_log_file, 'w')
+    e_log = open(error_log_file, 'w')
     process_returncode = subprocess.call(cmd_str, stdout = output_log_file,
                                stderr = error_log_file, shell = True)
+    print "FINISHED"
     print process_returncode
+    print "-"*100
+
+    o_log.close()
+    e_log.close()
     if process_returncode != 0:
         raise Exception("Failed to run '%s' \n Non-zero exit status %s" %
                         (cmd_str, process_returncode))
 
 
-def picard_cleansam(input_file, output_file, log_file):
+def picard_cleansam(input_file, output_file, file_name):
     """
     :param input_file: string '12766.sorted.bam'
     :param output_file: string '12766.CleanSam.bam'
@@ -56,21 +65,16 @@ def picard_cleansam(input_file, output_file, log_file):
     :return: stderror and stdout
     """
 
-    in_file_path = BASE_OUT_DIR + ("""gq_alignment_bam/12429.sorted.bam""")
-    out_log_file_path = LOG_DIR + "/12429.picard.CleanSam.out.log"
-    err_log_file_path = LOG_DIR + "/12429.picard.CleanSam.err.log"
+    in_file_path = BASE_OUT_DIR + "gq_alignment_bam/12429.sorted.bam"
+    out_log_file_path = LOG_DIR + "12429.picard.CleanSam" + ".out.log"
+    err_log_file_path = LOG_DIR + "12429.picard.CleanSam" + ".err.log"
     out_file_path = CLEANSAM_OUT_DIR + "/12429.picard.CleanSam.bam"
-    o_log = open(out_log_file_path, 'w')
-    e_log = open(err_log_file_path, 'w')
-    command_str = ("""java -jar {picard} CleanSam INPUT={inp} OUTPUT={outp} VALIDATION_STRINGENCY=SILENT """
-        """CREATE_INDEX=true TMP_DIR=/tmp""".format(picard = PICARD_JAR, inp = in_file_path, outp = out_file_path))
 
-    print(command_str)
-    #write to log file
-    run_cmd(command_str, o_log, e_log)
-    o_log.close()
-    e_log.close()
-#    print(logs)
+    command_str = ("""java -jar {picard} CleanSam INPUT={inp} OUTPUT={outp} VALIDATION_STRINGENCY=SILENT """
+        """CREATE_INDEX=true TMP_DIR=/tmp""".format(picard = PICARD_JAR,
+        inp = in_file_path, outp = out_file_path))
+    run_cmd(command_str, out_log_file_path, err_log_file_path)
+
 
 
 
@@ -159,16 +163,15 @@ def popoolation2_mpileup_to_sync(input_file, output_file, log_file):
 
 
 if __name__ == '__main__':
-    log = run_cmd("echo 'Test'" )
-    print(log)
-
 
     ensure_path_exists(BASE_OUT_DIR)
     ensure_path_exists(CLEANSAM_OUT_DIR)
     ensure_path_exists(LOG_DIR)
 
-    print(PICARD_JAR, POPOOLATION2_DIR, CATTLE_REF_DIR, CATTLE_REF_SEQ_FILE)
-    picard_cleansam(1,2,3)
+    files = [f for f in os.listdir(INIT_DIR) if os.path.isfile(f)]
+    print files
+
+    #picard_cleansam(1,2,3)
     sys.exit(0)
 
 
