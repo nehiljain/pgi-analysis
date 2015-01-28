@@ -16,13 +16,13 @@ CATTLE_REF_SEQ_FILE = CATTLE_REF_DIR + "Bos_taurus.UMD3.1.dna.toplevel.fa"
 
 INIT_DIR = "/share/volatile_scratch/nehil/pgi_wc/cattle/dna_seq/gq_alignment_bam/"
 
-BASE_OUT_DIR = "/share/volatile_scratch/nehil/pgi_wc/cattle/dna_seq/"
+BASE_DIR = "/share/volatile_scratch/nehil/pgi_wc/cattle/dna_seq/"
 LOG_DIR = "/share/volatile_scratch/nehil/pgi_wc/logs/"
-CLEANSAM_OUT_DIR = BASE_OUT_DIR + "nehil_cleansam_bam"
-MAPQ20_OUT_DIR =   BASE_OUT_DIR + "nehil_mapq20_bam"
+CLEANSAM_OUT_DIR = BASE_DIR + "nehil_cleansam_bam/"
+MAPQ20_OUT_DIR =   BASE_DIR + "nehil_mapq20_bam/"
 
-SYNC_OUT_DIR = BASE_OUT_DIR + "nehil_samtools_mpileup/"
-SYNC_OUT_DIR = BASE_OUT_DIR + "nehil_mpileup2sync_sync/"
+SYNC_OUT_DIR = BASE_DIR + "nehil_samtools_mpileup/"
+SYNC_OUT_DIR = BASE_DIR + "nehil_mpileup2sync_sync/"
 
 
 def ensure_path_exists(path):
@@ -65,7 +65,7 @@ def picard_cleansam(input_file, output_file, file_name):
     :return: stderror and stdout
     """
 
-    in_file_path = BASE_OUT_DIR + "gq_alignment_bam/12429.sorted.bam"
+    in_file_path = BASE_DIR + "gq_alignment_bam/12429.sorted.bam"
     out_log_file_path = LOG_DIR + "12429.picard.CleanSam" + ".out.log"
     err_log_file_path = LOG_DIR + "12429.picard.CleanSam" + ".err.log"
     out_file_path = CLEANSAM_OUT_DIR + "/12429.picard.CleanSam.bam"
@@ -76,17 +76,21 @@ def picard_cleansam(input_file, output_file, file_name):
     run_cmd(command_str, out_log_file_path, err_log_file_path)
 
 
-
-
-def samtools_mapq20(input_file, output_file, log_file):
+def samtools_mapq20(input_file, output_file, file_name):
     """
 
     :param input_file:
     :param output_file:
-    :param log_file:
+    :param file_name:
     :return:
     """
-    pass
+    out_file_path = MAPQ20_OUT_DIR + "12429.samtools.MAPQ20" + ".bam"
+    err_log_file_path = LOG_DIR + "12429.samtools.MAPQ20" + ".err.log"
+    in_file_path = CLEANSAM_OUT_DIR + "12429.picard.CleanSam.bam"
+
+    command_str = ("""samtools view -bq 20 {inp}""".format(
+        inp = in_file_path))
+    run_cmd(command_str, out_file_path, err_log_file_path)
 
 
 def picard_fixmate(input_file, output_file, log_file):
@@ -159,19 +163,24 @@ def popoolation2_mpileup_to_sync(input_file, output_file, log_file):
     print(logs)
     pass
 
+def get_all_init_filepaths(dir_path):
+    """This function gets the BAM files from the INIT DIR folder.
+    """
+    init_bam_files = [(dir_path + f) for f in os.listdir(dir_path)
+                        if os.path.splitext(f)[1] == '.bam']
+    return init_bam_files
 
 
 
 if __name__ == '__main__':
 
-    ensure_path_exists(BASE_OUT_DIR)
+    ensure_path_exists(BASE_DIR)
     ensure_path_exists(CLEANSAM_OUT_DIR)
     ensure_path_exists(LOG_DIR)
-
-    files = [f for f in os.listdir(INIT_DIR) if os.path.isfile(f)]
-    print files
+    print get_all_init_filepaths(INIT_DIR)
 
     #picard_cleansam(1,2,3)
+    samtools_mapq20(1,2,3)
     sys.exit(0)
 
 
