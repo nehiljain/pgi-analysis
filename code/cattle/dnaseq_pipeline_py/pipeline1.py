@@ -44,7 +44,7 @@ def run_cmd(cmd_str, output_log_file = open('output.log','w'),
                                stderr = error_log_file, shell = True)
     print process_returncode
     if process_returncode != 0:
-        raise Exception("Failed to run '%s' \n %s Non-zero exit status %s" %
+        raise Exception("Failed to run '%s' \n Non-zero exit status %s" %
                         (cmd_str, process_returncode))
 
 
