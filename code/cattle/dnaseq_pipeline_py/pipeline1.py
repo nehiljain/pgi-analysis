@@ -62,7 +62,7 @@ def picard_cleansam(input_file, output_file, log_file):
     out_file_path = CLEANSAM_OUT_DIR + "/12429.picard.CleanSam.bam"
     o_log = open(out_log_file_path, 'w')
     e_log = open(err_log_file_path, 'w')
-    command_str = ("""java -jar {picard} CleanSam INPUT={inp} OUTPUT={outp} VALIDATION_STRINGENCY=SILENT"""
+    command_str = ("""java -jar {picard} CleanSam INPUT={inp} OUTPUT={outp} VALIDATION_STRINGENCY=SILENT """
         """CREATE_INDEX=true TMP_DIR=/tmp""".format(picard = PICARD_JAR, inp = in_file_path, outp = out_file_path))
 
     print(command_str)
