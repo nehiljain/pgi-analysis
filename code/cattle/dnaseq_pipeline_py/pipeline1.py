@@ -44,8 +44,8 @@ def run_cmd(cmd_str, output_log_file = 'output.log',
     print "cmd_str"
     o_log = open(output_log_file, 'w')
     e_log = open(error_log_file, 'w')
-    process_returncode = subprocess.call(cmd_str, stdout = output_log_file,
-                               stderr = error_log_file, shell = True)
+    process_returncode = subprocess.call(cmd_str, stdout = o_log,
+                               stderr = e_log, shell = True)
     print "FINISHED"
     print process_returncode
     print "-"*100
@@ -176,6 +176,7 @@ if __name__ == '__main__':
 
     ensure_path_exists(BASE_DIR)
     ensure_path_exists(CLEANSAM_OUT_DIR)
+    ensure_path_exists(MAPQ20_OUT_DIR)
     ensure_path_exists(LOG_DIR)
     print get_all_init_filepaths(INIT_DIR)
 
