@@ -7,7 +7,7 @@
 import sys
 import subprocess
 import os
-import ruffus
+#import ruffus
 
 PICARD_JAR = "/share/apps/picard/git/bin/picard.jar"
 POPOOLATION2_DIR = "/home/kzukowski/soft/popoolation2_1201/"
@@ -17,6 +17,7 @@ CATTLE_REF_SEQ_FILE = CATTLE_REF_DIR + "Bos_taurus.UMD3.1.dna.toplevel.fa"
 INIT_BAM_DIR = "/share/volatile_scratch/nehil/pgi_wc/cattle/dna_seq/gq_alignment_bam/"
 
 BASE_OUT_DIR = "/share/volatile_scratch/nehil/pgi_wc/cattle/dna_seq/"
+LOG_DIR = "/share/volatile_scratch/nehil/pgi_wc/logs/"
 CLEANSAM_OUT_DIR = BASE_OUT_DIR + "nehil_cleansam_bam"
 MAPQ20_OUT_DIR =   BASE_OUT_DIR + "nehil_mapq20_bam"
 
@@ -55,11 +56,10 @@ def picard_cleansam(input_file, output_file, log_file):
     :return: stderror and stdout
     """
 
-    in_file_path = ("""/share/volatile_scratch/nehil/cattle/Bos_taurus_DNAalignment_975/12766/run2332_4/12766.MPS1230"""
-        """1871-B04.sorted.bam""")
-    out_log_file_path = "/share/volatile_scratch/kzukowski/pgi/cattle/test/log/12766.picard.CleanSam.out.log"
-    err_log_file_path = "/share/volatile_scratch/kzukowski/pgi/cattle/test/log/12766.picard.CleanSam.err.log"
-    out_file_path = "/share/volatile_scratch/kzukowski/pgi/cattle/test/data/12766.CleanSam.bam"
+    in_file_path = BASE_OUT_DIR + ("""gq_alignment_bam/12429.sorted.bam""")
+    out_log_file_path = LOG_DIR + "/12429.picard.CleanSam.out.log"
+    err_log_file_path = LOG_DIR + "/12429.picard.CleanSam.err.log"
+    out_file_path = CLEANSAM_OUT_DIR + "/12429.picard.CleanSam.bam"
     o_log = open(out_log_file_path, 'w')
     e_log = open(err_log_file_path, 'w')
     command_str = ("""java -jar {picard} CleanSam INPUT={inp} OUTPUT={outp} VALIDATION_STRINGENCY=SILENT"""
@@ -165,7 +165,7 @@ if __name__ == '__main__':
 
     ensure_path_exists(BASE_OUT_DIR)
     ensure_path_exists(CLEANSAM_OUT_DIR)
-
+    ensure_path_exists(LOG_DIR)
 
     print(PICARD_JAR, POPOOLATION2_DIR, CATTLE_REF_DIR, CATTLE_REF_SEQ_FILE)
     picard_cleansam(1,2,3)
