@@ -19,7 +19,9 @@ INIT_DIR = "/share/volatile_scratch/nehil/pgi_wc/cattle/dna_seq/gq_alignment_bam
 BASE_DIR = "/share/volatile_scratch/nehil/pgi_wc/cattle/dna_seq/"
 LOG_DIR = "/share/volatile_scratch/nehil/pgi_wc/logs/"
 CLEANSAM_OUT_DIR = BASE_DIR + "nehil_cleansam_bam/"
-MAPQ20_OUT_DIR =   BASE_DIR + "nehil_mapq20_bam/"
+MAPQ20_OUT_DIR = BASE_DIR + "nehil_mapq20_bam/"
+FIXMATE_OUT_DIR = BASE_DIR + "nehil_fixmate_bam/"
+
 
 SYNC_OUT_DIR = BASE_DIR + "nehil_samtools_mpileup/"
 SYNC_OUT_DIR = BASE_DIR + "nehil_mpileup2sync_sync/"
@@ -40,8 +42,8 @@ def run_cmd(cmd_str, output_log_file = 'output.log',
     command fails.
     returns stdout and stderror in a list"""
     print "-"*100
-    print "Running Shell Command: \n\n"
-    print "cmd_str"
+    print "Running Shell Command: \n"
+    print cmd_str
     o_log = open(output_log_file, 'w')
     e_log = open(error_log_file, 'w')
     process_returncode = subprocess.call(cmd_str, stdout = o_log,
@@ -68,9 +70,9 @@ def picard_cleansam(input_file, output_file, file_name):
     in_file_path = BASE_DIR + "gq_alignment_bam/12429.sorted.bam"
     out_log_file_path = LOG_DIR + "12429.picard.CleanSam" + ".out.log"
     err_log_file_path = LOG_DIR + "12429.picard.CleanSam" + ".err.log"
-    out_file_path = CLEANSAM_OUT_DIR + "/12429.picard.CleanSam.bam"
+    out_file_path = CLEANSAM_OUT_DIR + "12429.picard.CleanSam.bam"
 
-    command_str = ("""java -jar {picard} CleanSam INPUT={inp} OUTPUT={outp} VALIDATION_STRINGENCY=SILENT """
+    command_str = ("""java -Xmx8g -jar {picard} CleanSam INPUT={inp} OUTPUT={outp} VALIDATION_STRINGENCY=SILENT """
         """CREATE_INDEX=true TMP_DIR=/tmp""".format(picard = PICARD_JAR,
         inp = in_file_path, outp = out_file_path))
     run_cmd(command_str, out_log_file_path, err_log_file_path)
@@ -93,7 +95,7 @@ def samtools_mapq20(input_file, output_file, file_name):
     run_cmd(command_str, out_file_path, err_log_file_path)
 
 
-def picard_fixmate(input_file, output_file, log_file):
+def picard_fixmate(input_file, output_file, filename):
     """
 
     :param input_file:
@@ -101,7 +103,17 @@ def picard_fixmate(input_file, output_file, log_file):
     :param log_file:
     :return:
     """
-    pass
+    in_file_path = MAPQ20_OUT_DIR + "12429.samtools.MAPQ20" + ".bam"
+    out_log_file_path = LOG_DIR + "12429.picard.Fixmate" + ".out.log"
+    err_log_file_path = LOG_DIR + "12429.picard.Fixmate" + ".err.log"
+    out_file_path = FIXMATE_OUT_DIR + "12429.picard.Fixmate" + ".bam"
+
+    command_str = ("""java -Xmx8g -jar {picard} FixMateInformation INPUT={inp} OUTPUT={outp} VALIDATION_STRINGENCY=SILENT SORT_ORDER=coordinate ASSUME_SORTED=true ADD_MATE_CIGAR=true"""
+        """CREATE_INDEX=true TMP_DIR=/tmp""".format(picard = PICARD_JAR,
+        inp = in_file_path, outp = out_file_path))
+    print command_str
+    # run_cmd(command_str, out_log_file_path, err_log_file_path)
+
 
 
 def picard_mark_duplicates(input_file, output_file, log_file):
@@ -175,13 +187,16 @@ def get_all_init_filepaths(dir_path):
 if __name__ == '__main__':
 
     ensure_path_exists(BASE_DIR)
+    ensure_path_exists(LOG_DIR)
     ensure_path_exists(CLEANSAM_OUT_DIR)
     ensure_path_exists(MAPQ20_OUT_DIR)
-    ensure_path_exists(LOG_DIR)
+    ensure_path_exists(FIXMATE_OUT_DIR)
+
     print get_all_init_filepaths(INIT_DIR)
 
-    #picard_cleansam(1,2,3)
-    samtools_mapq20(1,2,3)
+    # picard_cleansam(1,2,3)
+    # samtools_mapq20(1,2,3)
+    picard_fixmate(1,2,3)
     sys.exit(0)
 
 
