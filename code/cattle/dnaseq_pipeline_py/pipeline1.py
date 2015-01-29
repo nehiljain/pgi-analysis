@@ -234,6 +234,7 @@ if __name__ == '__main__':
     ensure_path_exists(LOG_DIR)
     ensure_path_exists(CLEANSAM_OUT_DIR)
     ensure_path_exists(MAPQ20_OUT_DIR)
+    ensure_path_exists(DEDUP_OUT_DIR)
     ensure_path_exists(FIXMATE_OUT_DIR)
     ensure_path_exists(MULTIPLE_METRICS_OUT_DIR)
 
