@@ -21,6 +21,11 @@ LOG_DIR = "/share/volatile_scratch/nehil/pgi_wc/logs/"
 CLEANSAM_OUT_DIR = BASE_DIR + "nehil_cleansam_bam/"
 MAPQ20_OUT_DIR = BASE_DIR + "nehil_mapq20_bam/"
 FIXMATE_OUT_DIR = BASE_DIR + "nehil_fixmate_bam/"
+DEDUP_OUT_DIR = BASE_DIR + "nehil_mark_duplicates_bam/"
+MULTIPLE_METRICS_OUT_DIR = BASE_DIR +
+            'nehil_collect_multiple_metrics_CollectMultipleMetrics/'
+COLLECT_GC_BIAS_METRICS_OUT_DIR = BASE_DIR +
+            'nehil_collect_gc_bias_meterics_CollectGcBiasMetrics/'
 
 
 SYNC_OUT_DIR = BASE_DIR + "nehil_samtools_mpileup/"
@@ -59,7 +64,7 @@ def run_cmd(cmd_str, output_log_file = 'output.log',
                         (cmd_str, process_returncode))
 
 
-def picard_cleansam(input_file, output_file, file_name):
+def picard_cleansam(input_file, output_file, filename):
     """
     :param input_file: string '12766.sorted.bam'
     :param output_file: string '12766.CleanSam.bam'
@@ -73,12 +78,12 @@ def picard_cleansam(input_file, output_file, file_name):
     out_file_path = CLEANSAM_OUT_DIR + "12429.picard.CleanSam.bam"
 
     command_str = ("""java -Xmx8g -jar {picard} CleanSam INPUT={inp} OUTPUT={outp} VALIDATION_STRINGENCY=SILENT """
-        """CREATE_INDEX=true TMP_DIR=/tmp""".format(picard = PICARD_JAR,
+        """ CREATE_INDEX=true TMP_DIR=/tmp""".format(picard = PICARD_JAR,
         inp = in_file_path, outp = out_file_path))
     run_cmd(command_str, out_log_file_path, err_log_file_path)
 
 
-def samtools_mapq20(input_file, output_file, file_name):
+def samtools_mapq20(input_file, output_file, filename):
     """
 
     :param input_file:
@@ -108,15 +113,36 @@ def picard_fixmate(input_file, output_file, filename):
     err_log_file_path = LOG_DIR + "12429.picard.Fixmate" + ".err.log"
     out_file_path = FIXMATE_OUT_DIR + "12429.picard.Fixmate" + ".bam"
 
-    command_str = ("""java -Xmx8g -jar {picard} FixMateInformation INPUT={inp} OUTPUT={outp} VALIDATION_STRINGENCY=SILENT SORT_ORDER=coordinate ASSUME_SORTED=true ADD_MATE_CIGAR=true"""
+    command_str = ("""java -Xmx8g -jar {picard} FixMateInformation INPUT={inp} OUTPUT={outp} VALIDATION_STRINGENCY=SILENT SORT_ORDER=coordinate ASSUME_SORTED=true ADD_MATE_CIGAR=true """
         """CREATE_INDEX=true TMP_DIR=/tmp""".format(picard = PICARD_JAR,
         inp = in_file_path, outp = out_file_path))
+    # print command_str
+    run_cmd(command_str, out_log_file_path, err_log_file_path)
+
+
+
+def picard_mark_duplicates(input_file, output_file, filename):
+    """
+
+    :param input_file:
+    :param output_file:
+    :param log_file:
+    :return:
+    """
+    out_file_path = DEDUP_OUT_DIR + "12429.picard.DeDup" + ".bam"
+    out_metrics_file_path = DEDUP_OUT_DIR + "12429.picard.DeDup" + ".metrics"
+    out_log_file_path = LOG_DIR + "12429.picard.DeDup" + ".out.log"
+    err_log_file_path = LOG_DIR + "12429.picard.DeDup" + ".err.log"
+    in_file_path = FIXMATE_OUT_DIR + "12429.picard.Fixmate" + ".bam"
+
+    command_str = ("""java -Xmx8g -jar {picard} MarkDuplicates INPUT={inp} OUTPUT={outp} METRICS_FILE={metrp} VALIDATION_STRINGENCY=SILENT REMOVE_DUPLICATES=true ASSUME_SORTED=true """
+        """ CREATE_INDEX=true TMP_DIR=/tmp""".format(picard = PICARD_JAR,
+        inp = in_file_path, outp = out_file_path,
+        metrp = out_metrics_file_path ))
     print command_str
-    # run_cmd(command_str, out_log_file_path, err_log_file_path)
 
 
-
-def picard_mark_duplicates(input_file, output_file, log_file):
+def picard_collect_multiple_metrics(input_file, output_file, file_name):
     """
 
     :param input_file:
@@ -124,12 +150,16 @@ def picard_mark_duplicates(input_file, output_file, log_file):
     :param log_file:
     :return:
     """
-    pass
+    out_file_path = MULTIPLE_METRICS_OUT_DIR + "12429.picard" + ".CollectMultipleMetrics"
+    out_log_file_path = LOG_DIR + "12429.picard.CollectMultipleMetrics" + ".out.log"
+    err_log_file_path = LOG_DIR + "12429.picard.CollectMultipleMetrics" + ".err.log"
+    in_file_path = DEDUP_OUT_DIR + "12429.picard.DeDup" + ".bam"
 
-def picard_collect_duplicates(input_file,
-                              output_file, chart_output_file,
-                              reference_seq,
-                              log_file):
+    command_str = ("""java -Xmx8g -jar {picard} CollectMultipleMetrics INPUT={inp} OUTPUT={outp} VALIDATION_STRINGENCY=SILENT TMP_DIR=/tmp""".format(picard = PICARD_JAR, inp = in_file_path, outp = out_file_path))
+    print command_str
+
+
+def picard_collect_gc_bias_metrics(input_file, output_file, file_name):
     """
 
     :param input_file:
@@ -137,7 +167,22 @@ def picard_collect_duplicates(input_file,
     :param log_file:
     :return:
     """
-    pass
+    out_file_path = COLLECT_GC_BIAS_METRICS_OUT_DIR + "12429.picard" +
+        ".CollectGcBiasMetrics"
+    out_chart_file_path = COLLECT_GC_BIAS_METRICS_OUT_DIR + "12429.picard" +
+        ".CollectGcBiasMetrics" + ".pdf"
+    out_log_file_path = LOG_DIR + "12429.picard.CollectGcBiasMetrics" +
+        ".out.log"
+    err_log_file_path = LOG_DIR + "12429.picard.CollectGcBiasMetrics" +
+        ".err.log"
+    in_file_path = DEDUP_OUT_DIR + "12429.picard.DeDup" + ".bam"
+
+    command_str = ("""java -Xmx8g -jar {picard} CollectMultipleMetrics INPUT={inp} OUTPUT={outp} CHART_OUTPUT={chartp} """
+    """ REFERENCE_SEQUENCE={ref_seq} """
+    """ VALIDATION_STRINGENCY=SILENT TMP_DIR=/tmp""".format(picard = PICARD_JAR, inp = in_file_path, outp = out_file_path, ref_seq = CATTLE_REF_SEQ_FILE ,
+         chartp = ))
+    print command_str
+
 
 
 def samtools_mpileup(input_files,
@@ -191,12 +236,13 @@ if __name__ == '__main__':
     ensure_path_exists(CLEANSAM_OUT_DIR)
     ensure_path_exists(MAPQ20_OUT_DIR)
     ensure_path_exists(FIXMATE_OUT_DIR)
-
-    print get_all_init_filepaths(INIT_DIR)
+    ensure_path_exists(MULTIPLE_METRICS_OUT_DIR)
 
     # picard_cleansam(1,2,3)
     # samtools_mapq20(1,2,3)
     picard_fixmate(1,2,3)
+    picard_mark_duplicates(1,2,3)
+    picard_collect_multiple_metrics(1,2,3)
     sys.exit(0)
 
 
