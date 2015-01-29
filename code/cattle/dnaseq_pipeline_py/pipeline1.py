@@ -166,14 +166,14 @@ def picard_collect_gc_bias_metrics(input_file, output_file, file_name):
     :param log_file:
     :return:
     """
-    out_file_path = COLLECT_GC_BIAS_METRICS_OUT_DIR + "12429.picard" +
-        ".CollectGcBiasMetrics"
-    out_chart_file_path = COLLECT_GC_BIAS_METRICS_OUT_DIR + "12429.picard" +
-        ".CollectGcBiasMetrics" + ".pdf"
-    out_log_file_path = LOG_DIR + "12429.picard.CollectGcBiasMetrics" +
-        ".out.log"
-    err_log_file_path = LOG_DIR + "12429.picard.CollectGcBiasMetrics" +
-        ".err.log"
+    out_file_path = COLLECT_GC_BIAS_METRICS_OUT_DIR
+        + "12429.picard" +    ".CollectGcBiasMetrics"
+    out_chart_file_path = COLLECT_GC_BIAS_METRICS_OUT_DIR
+    + "12429.picard" + ".CollectGcBiasMetrics" + ".pdf"
+    out_log_file_path = LOG_DIR + "12429.picard.CollectGcBiasMetrics"
+    +        ".out.log"
+    err_log_file_path = LOG_DIR + "12429.picard.CollectGcBiasMetrics"
+    +   ".err.log"
     in_file_path = DEDUP_OUT_DIR + "12429.picard.DeDup" + ".bam"
 
     command_str = ("""java -Xmx8g -jar {picard} CollectMultipleMetrics INPUT={inp} OUTPUT={outp} CHART_OUTPUT={chartp} """
