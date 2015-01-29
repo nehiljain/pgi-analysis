@@ -116,7 +116,7 @@ def picard_fixmate(input_file, output_file, filename):
     command_str = ("""java -Xmx8g -jar {picard} FixMateInformation INPUT={inp} OUTPUT={outp} VALIDATION_STRINGENCY=SILENT SORT_ORDER=coordinate ASSUME_SORTED=true ADD_MATE_CIGAR=true """
         """CREATE_INDEX=true TMP_DIR=/tmp""".format(picard = PICARD_JAR,
         inp = in_file_path, outp = out_file_path))
-    # print command_str
+    print command_str
     run_cmd(command_str, out_log_file_path, err_log_file_path)
 
 
@@ -243,6 +243,7 @@ if __name__ == '__main__':
     picard_fixmate(1,2,3)
     picard_mark_duplicates(1,2,3)
     picard_collect_multiple_metrics(1,2,3)
+    picard_collect_gc_bias_metrics(1,2,3)
     sys.exit(0)
 
 
