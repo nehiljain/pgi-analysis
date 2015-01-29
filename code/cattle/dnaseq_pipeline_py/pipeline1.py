@@ -22,10 +22,9 @@ CLEANSAM_OUT_DIR = BASE_DIR + "nehil_cleansam_bam/"
 MAPQ20_OUT_DIR = BASE_DIR + "nehil_mapq20_bam/"
 FIXMATE_OUT_DIR = BASE_DIR + "nehil_fixmate_bam/"
 DEDUP_OUT_DIR = BASE_DIR + "nehil_mark_duplicates_bam/"
-MULTIPLE_METRICS_OUT_DIR = BASE_DIR +
-            'nehil_collect_multiple_metrics_CollectMultipleMetrics/'
-COLLECT_GC_BIAS_METRICS_OUT_DIR = BASE_DIR +
-            'nehil_collect_gc_bias_meterics_CollectGcBiasMetrics/'
+MULTIPLE_METRICS_OUT_DIR = BASE_DIR + """nehil_collect_multiple_metrics_CollectMultipleMetrics/"""
+COLLECT_GC_BIAS_METRICS_OUT_DIR = BASE_DIR + """
+            nehil_collect_gc_bias_meterics_CollectGcBiasMetrics/"""
 
 
 SYNC_OUT_DIR = BASE_DIR + "nehil_samtools_mpileup/"
