@@ -72,7 +72,11 @@ def get_all_init_filepaths(dir_path):
 init_files = get_all_init_filepaths(INIT_DIR)
 
 
-@follows(mkdir(CLEANSAM_OUT_DIR))
+def init_stub(i, o):
+    pass
+
+
+@follows(init_stub, mkdir(CLEANSAM_OUT_DIR))
 @transform(init_files, suffix(".bam"),
            [".CleanSam.bam", ".CleanSam.out.log", ".CleanSam.err.log"])
 def picard_cleansam(input_file, output_file_names):
@@ -245,6 +249,7 @@ if __name__ == '__main__':
     ensure_path_exists(FIXMATE_OUT_DIR)
     ensure_path_exists(MULTIPLE_METRICS_OUT_DIR)
     ensure_path_exists(COLLECT_GC_BIAS_METRICS_OUT_DIR)
+    pipeline_run(target_tasks = [picard_cleansam])
     # picard_cleansam(1,2,3)
     # samtools_mapq20(1,2,3)
     # picard_fixmate(1,2,3)
