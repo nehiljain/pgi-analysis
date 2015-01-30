@@ -73,7 +73,7 @@ def get_all_init_filepaths(dir_path):
 
 init_files = []
 
-def init_stub(i, o):
+def init_stub():
     pass
 
 
@@ -98,6 +98,9 @@ def picard_cleansam(input_file, output_file_names):
     run_cmd(command_str, out_log_file_path, err_log_file_path)
 
 
+@follows("picard_cleansam", mkdir(MAPQ20_OUT_DIR))
+@transform(picard_cleansam, suffix(".bam"),
+           [".MAPQ20.bam", ".MAPQ20.out.log", ".MAPQ20.err.log"])
 def samtools_mapq20(input_file, output_file, filename):
     """
 
@@ -106,12 +109,12 @@ def samtools_mapq20(input_file, output_file, filename):
     :param file_name:
     :return:
     """
-    out_file_path = MAPQ20_OUT_DIR + "12429.samtools.MAPQ20" + ".bam"
-    err_log_file_path = LOG_DIR + "12429.samtools.MAPQ20" + ".err.log"
-    in_file_path = CLEANSAM_OUT_DIR + "12429.picard.CleanSam.bam"
+    out_log_file_path = LOG_DIR + output_file_names[1]
+    err_log_file_path = LOG_DIR + output_file_names[2]
+    out_file_path = MAPQ20_OUT_DIR + output_file_names[0]
 
     command_str = ("""samtools view -bq 20 {inp}""".format(
-        inp = in_file_path))
+        inp = input_file))
     run_cmd(command_str, out_file_path, err_log_file_path)
 
 
@@ -251,7 +254,7 @@ if __name__ == '__main__':
     ensure_path_exists(MULTIPLE_METRICS_OUT_DIR)
     ensure_path_exists(COLLECT_GC_BIAS_METRICS_OUT_DIR)
     init_files = get_all_init_filepaths(INIT_DIR)
-    pipeline_run(target_tasks = [picard_cleansam])
+    pipeline_run(target_tasks = [samtools_mapq20])
     # picard_cleansam(1,2,3)
     # samtools_mapq20(1,2,3)
     # picard_fixmate(1,2,3)
