@@ -9,6 +9,8 @@ import subprocess
 import os
 import ruffus
 
+from ruffus import *
+
 PICARD_JAR = "/share/apps/picard/git/bin/picard.jar"
 POPOOLATION2_DIR = "/home/kzukowski/soft/popoolation2_1201/"
 CATTLE_REF_DIR = "/share/volatile_scratch/kzukowski/pgi/cattle/reference/"
@@ -69,8 +71,7 @@ def get_all_init_filepaths(dir_path):
                         if os.path.splitext(f)[1] == '.bam']
     return init_bam_files
 
-init_files = get_all_init_filepaths(INIT_DIR)
-
+init_files = []
 
 def init_stub(i, o):
     pass
@@ -249,6 +250,7 @@ if __name__ == '__main__':
     ensure_path_exists(FIXMATE_OUT_DIR)
     ensure_path_exists(MULTIPLE_METRICS_OUT_DIR)
     ensure_path_exists(COLLECT_GC_BIAS_METRICS_OUT_DIR)
+    init_files = get_all_init_filepaths(INIT_DIR)
     pipeline_run(target_tasks = [picard_cleansam])
     # picard_cleansam(1,2,3)
     # samtools_mapq20(1,2,3)
