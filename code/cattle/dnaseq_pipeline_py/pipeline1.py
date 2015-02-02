@@ -72,15 +72,13 @@ def get_all_init_filepaths(dir_path):
     return init_bam_files
 
 init_files = get_all_init_filepaths(INIT_DIR)
-@originate(init_files)
-def init_stub(output_files):
-    print(os.path.exists(output_files))
+
+def init_stub():
     pass
 
 
-@mkdir(CLEANSAM_OUT_DIR)
-@transform(init_stub, suffix(".bam"),
-           [".CleanSam.bam", ".CleanSam.out.log", ".CleanSam.err.log"])
+@transform(init_files, suffix(".bam"),
+           [".CleanSam.bam", ".CleanSam.out.log", ".CleanSam.err.log", ".CleanSam.Success"])
 def picard_cleansam(input_file, output_file_names):
     """
     :param input_file: string '12766.sorted.bam'
@@ -92,19 +90,18 @@ def picard_cleansam(input_file, output_file_names):
     out_log_file_path = output_file_names[1]
     err_log_file_path = output_file_names[2]
     out_file_path = output_file_names[0]
+    flag_file = output_file_names[3]
 
     command_str = ("""java -Xmx8g -jar {picard} CleanSam INPUT={inp} OUTPUT={outp} VALIDATION_STRINGENCY=SILENT """
         """ CREATE_INDEX=true TMP_DIR=/tmp""".format(picard = PICARD_JAR,
         inp = in_file_path, outp = out_file_path))
     run_cmd(command_str, out_log_file_path, err_log_file_path)
+    open(flag_file, "w")
 
-
-@follows("picard_cleansam", mkdir(MAPQ20_OUT_DIR))
 @transform(picard_cleansam, suffix(".CleanSam.bam"),
-           [".MAPQ20.bam", ".MAPQ20.out.log", ".MAPQ20.err.log"])
+           [".MAPQ20.bam", ".MAPQ20.out.log", ".MAPQ20.err.log", ".MapQ20.Success"])
 def samtools_mapq20(input_file, output_file, filename):
     """
-
     :param input_file:
     :param output_file:
     :param file_name:
@@ -113,11 +110,11 @@ def samtools_mapq20(input_file, output_file, filename):
     out_log_file_path = output_file_names[1]
     err_log_file_path = output_file_names[2]
     out_file_path = output_file_names[0]
-
+    flag_file = output_file_names[3]
     command_str = ("""samtools view -bq 20 {inp}""".format(
         inp = input_file))
     run_cmd(command_str, out_file_path, err_log_file_path)
-
+    open(flag_file, "w")
 
 def picard_fixmate(input_file, output_file, filename):
     """
@@ -257,7 +254,6 @@ if __name__ == '__main__':
     # ensure_path_exists(FIXMATE_OUT_DIR)
     # ensure_path_exists(MULTIPLE_METRICS_OUT_DIR)
     # ensure_path_exists(COLLECT_GC_BIAS_METRICS_OUT_DIR)
-    init_files = get_all_init_filepaths(INIT_DIR)
     pipeline_printout(target_tasks = [picard_cleansam, samtools_mapq20], verbose=10,checksum_level=3,verbose_abbreviated_path=1)
     # picard_cleansam(1,2,3)
     # samtools_mapq20(1,2,3)
