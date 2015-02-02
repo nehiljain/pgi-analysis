@@ -16,20 +16,20 @@ POPOOLATION2_DIR = "/home/kzukowski/soft/popoolation2_1201/"
 CATTLE_REF_DIR = "/share/volatile_scratch/kzukowski/pgi/cattle/reference/"
 CATTLE_REF_SEQ_FILE = CATTLE_REF_DIR + "Bos_taurus.UMD3.1.dna.toplevel.fa"
 
-INIT_DIR = "/share/volatile_scratch/nehil/pgi_wc/cattle/dna_seq/gq_alignment_bam/"
+INIT_DIR = "/share/volatile_scratch/nehil/pgi_wc/cattle/dna_seq/rm_ruffus_test/"
 
 BASE_DIR = "/share/volatile_scratch/nehil/pgi_wc/cattle/dna_seq/"
 LOG_DIR = "/share/volatile_scratch/nehil/pgi_wc/logs/"
-CLEANSAM_OUT_DIR = BASE_DIR + "nehil_cleansam_bam/"
-MAPQ20_OUT_DIR = BASE_DIR + "nehil_mapq20_bam/"
-FIXMATE_OUT_DIR = BASE_DIR + "nehil_fixmate_bam/"
-DEDUP_OUT_DIR = BASE_DIR + "nehil_mark_duplicates_bam/"
-MULTIPLE_METRICS_OUT_DIR = BASE_DIR + """nehil_collect_multiple_metrics_CollectMultipleMetrics/"""
-COLLECT_GC_BIAS_METRICS_OUT_DIR = BASE_DIR + """ nehil_collect_gc_bias_meterics_CollectGcBiasMetrics/"""
+CLEANSAM_OUT_DIR =  "nehil_cleansam_bam/"
+MAPQ20_OUT_DIR =  "nehil_mapq20_bam/"
+FIXMATE_OUT_DIR =  "nehil_fixmate_bam/"
+DEDUP_OUT_DIR =  "nehil_mark_duplicates_bam/"
+MULTIPLE_METRICS_OUT_DIR =  """nehil_collect_multiple_metrics_CollectMultipleMetrics/"""
+COLLECT_GC_BIAS_METRICS_OUT_DIR =  """ nehil_collect_gc_bias_meterics_CollectGcBiasMetrics/"""
 
 
-SYNC_OUT_DIR = BASE_DIR + "nehil_samtools_mpileup/"
-SYNC_OUT_DIR = BASE_DIR + "nehil_mpileup2sync_sync/"
+SYNC_OUT_DIR =  "nehil_samtools_mpileup/"
+SYNC_OUT_DIR =  "nehil_mpileup2sync_sync/"
 
 
 def ensure_path_exists(path):
@@ -71,7 +71,7 @@ def get_all_init_filepaths(dir_path):
                         if os.path.splitext(f)[1] == '.bam']
     return init_bam_files
 
-init_files = []
+init_files = get_all_init_filepaths(INIT_DIR)
 
 def init_stub():
     pass
@@ -87,10 +87,10 @@ def picard_cleansam(input_file, output_file_names):
     :return: stderror and stdout
     """
 
-    in_file_path = INIT_DIR + init_files
+    in_file_path = init_files
     out_log_file_path = LOG_DIR + output_file_names[1]
     err_log_file_path = LOG_DIR + output_file_names[2]
-    out_file_path = CLEANSAM_OUT_DIR + output_file_names[0]
+    out_file_path = output_file_names[0]
 
     command_str = ("""java -Xmx8g -jar {picard} CleanSam INPUT={inp} OUTPUT={outp} VALIDATION_STRINGENCY=SILENT """
         """ CREATE_INDEX=true TMP_DIR=/tmp""".format(picard = PICARD_JAR,
@@ -99,7 +99,7 @@ def picard_cleansam(input_file, output_file_names):
 
 
 @follows("picard_cleansam", mkdir(MAPQ20_OUT_DIR))
-@transform(picard_cleansam, suffix(".bam"),
+@transform(picard_cleansam, suffix(".CleanSam.bam"),
            [".MAPQ20.bam", ".MAPQ20.out.log", ".MAPQ20.err.log"])
 def samtools_mapq20(input_file, output_file, filename):
     """
@@ -111,7 +111,7 @@ def samtools_mapq20(input_file, output_file, filename):
     """
     out_log_file_path = LOG_DIR + output_file_names[1]
     err_log_file_path = LOG_DIR + output_file_names[2]
-    out_file_path = MAPQ20_OUT_DIR + output_file_names[0]
+    out_file_path = output_file_names[0]
 
     command_str = ("""samtools view -bq 20 {inp}""".format(
         inp = input_file))
@@ -246,15 +246,18 @@ if __name__ == '__main__':
 
     init_files = get_all_init_filepaths(INIT_DIR)
     ensure_path_exists(BASE_DIR)
-    ensure_path_exists(LOG_DIR)
-    ensure_path_exists(CLEANSAM_OUT_DIR)
-    ensure_path_exists(MAPQ20_OUT_DIR)
-    ensure_path_exists(DEDUP_OUT_DIR)
-    ensure_path_exists(FIXMATE_OUT_DIR)
-    ensure_path_exists(MULTIPLE_METRICS_OUT_DIR)
-    ensure_path_exists(COLLECT_GC_BIAS_METRICS_OUT_DIR)
+    os.chdir(INIT_DIR)
+
+
+    # ensure_path_exists(LOG_DIR)
+    # ensure_path_exists(CLEANSAM_OUT_DIR)
+    # ensure_path_exists(MAPQ20_OUT_DIR)
+    # ensure_path_exists(DEDUP_OUT_DIR)
+    # ensure_path_exists(FIXMATE_OUT_DIR)
+    # ensure_path_exists(MULTIPLE_METRICS_OUT_DIR)
+    # ensure_path_exists(COLLECT_GC_BIAS_METRICS_OUT_DIR)
     init_files = get_all_init_filepaths(INIT_DIR)
-    pipeline_run(target_tasks = [samtools_mapq20])
+    pipeline_printout(target_tasks = [picard_cleansam, samtools_mapq20], verbose=9,checksum_level=3,verbose_abbreviated_path=1)
     # picard_cleansam(1,2,3)
     # samtools_mapq20(1,2,3)
     # picard_fixmate(1,2,3)
