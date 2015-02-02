@@ -98,7 +98,8 @@ def picard_cleansam(input_file, output_file_names):
     run_cmd(command_str, out_log_file_path, err_log_file_path)
     open(flag_file, "w")
 
-@transform(picard_cleansam, suffix(".CleanSam.bam"),
+@follows("picard_cleansam")
+@transform(["*.CleanSam.bam"], suffix(".CleanSam.bam"),
            [".MAPQ20.bam", ".MAPQ20.out.log", ".MAPQ20.err.log", ".MapQ20.Success"])
 def samtools_mapq20(input_file, output_file, filename):
     """
@@ -243,24 +244,11 @@ def picard_mark_duplicates(input_file, output_file, filename):
 if __name__ == '__main__':
 
     init_files = get_all_init_filepaths(INIT_DIR)
-    ensure_path_exists(BASE_DIR)
+
     os.chdir(INIT_DIR)
-
-
-    # ensure_path_exists(LOG_DIR)
-    # ensure_path_exists(CLEANSAM_OUT_DIR)
-    # ensure_path_exists(MAPQ20_OUT_DIR)
-    # ensure_path_exists(DEDUP_OUT_DIR)
-    # ensure_path_exists(FIXMATE_OUT_DIR)
-    # ensure_path_exists(MULTIPLE_METRICS_OUT_DIR)
-    # ensure_path_exists(COLLECT_GC_BIAS_METRICS_OUT_DIR)
-    pipeline_printout(target_tasks = [picard_cleansam, samtools_mapq20], verbose=10,checksum_level=3,verbose_abbreviated_path=1)
-    # picard_cleansam(1,2,3)
-    # samtools_mapq20(1,2,3)
-    # picard_fixmate(1,2,3)
-    # picard_mark_duplicates(1,2,3)
-    # picard_collect_multiple_metrics(1,2,3)
-    # picard_collect_gc_bias_metrics(1,2,3)
+    pipeline_get_task_names()
+    pipeline_printout(forcedtorun_tasks = [picard_cleansam, samtools_mapq20], verbose=10,checksum_level=3,verbose_abbreviated_path=1)
+    pipeline_run(forcedtorun_tasks = [picard_cleansam, samtools_mapq20], verbose=10,checksum_level=3,verbose_abbreviated_path=1)
     sys.exit(0)
 
 
