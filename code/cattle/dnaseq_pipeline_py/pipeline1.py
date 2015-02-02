@@ -72,13 +72,14 @@ def get_all_init_filepaths(dir_path):
     return init_bam_files
 
 init_files = get_all_init_filepaths(INIT_DIR)
-
-def init_stub():
+@originate(init_files)
+def init_stub(output_files):
+    print(os.path.exists(output_files))
     pass
 
-@originate(init_files)
+
 @mkdir(CLEANSAM_OUT_DIR)
-@transform(suffix(".bam"),
+@transform(init_stub, suffix(".bam"),
            [".CleanSam.bam", ".CleanSam.out.log", ".CleanSam.err.log"])
 def picard_cleansam(input_file, output_file_names):
     """
