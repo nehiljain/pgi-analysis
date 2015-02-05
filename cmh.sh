@@ -26,7 +26,8 @@ cut -f 1,2,3,12 /share/volatile_scratch/kzukowski/pgi/mouse/test/chr3.cmh >/shar
 
 ################ REMOVING FILES -r !!!
 ################ NEHIL STEADY WITH THIS function!! :D
+### not used due genotype distribution plots?
 
-rm -r /share/volatile_scratch/kzukowski/pgi/mouse/test/chr3.cmh
-rm -r /share/volatile_scratch/kzukowski/pgi/mouse/test/chr3.cmh.params
+#rm -r /share/volatile_scratch/kzukowski/pgi/mouse/test/chr3.cmh
+#rm -r /share/volatile_scratch/kzukowski/pgi/mouse/test/chr3.cmh.params
 
