@@ -8,6 +8,7 @@ import sys
 import subprocess
 import os
 import ruffus
+import re
 
 from ruffus import *
 
@@ -68,7 +69,7 @@ def run_cmd(cmd_str, output_log_file = 'output.log',
 def get_all_init_filepaths(dir_path):
     """This function gets the BAM files from the INIT DIR folder.
     """
-    pattern = re.compile("*.sorted.bam");
+    pattern = re.compile("sorted.bam");
     init_bam_files = [ f for f in os.listdir(dir_path)
                         if re.search(pattern, f)]
     print "-"*100
@@ -91,7 +92,7 @@ def picard_cleansam(input_file, output_file_name):
     :param output_file: string '12766.CleanSam.bam'
     :return: stderror and stdout
     """
-
+    print(["INIT Files", init_files])
     out_log_file_path = LOG_DIR + os.path.splitext(input_file)[0] + ".out.log"
     err_log_file_path = LOG_DIR + os.path.splitext(input_file)[0] + ".err.log"
     out_file_path = output_file_names
@@ -253,7 +254,7 @@ ensure_path_exists(LOG_DIR)
 os.chdir(INIT_DIR)
 pipeline_get_task_names()
 pipeline_printout(output_stream = sys.stdout, target_tasks = [picard_cleansam, samtools_mapq20], verbose=10,checksum_level=3,verbose_abbreviated_path=1)
-pipeline_run(target_tasks = [picard_cleansam, samtools_mapq20], verbose=10,checksum_level=3,verbose_abbreviated_path=1)
+pipeline_run(forcedtorun_tasks = [picard_cleansam, samtools_mapq20], verbose=10,checksum_level=3,verbose_abbreviated_path=1)
 
 
 
