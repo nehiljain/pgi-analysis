@@ -79,28 +79,28 @@ def get_all_init_filepaths(dir_path):
     return init_bam_files
 
 init_files = get_all_init_filepaths(INIT_DIR)
-
+print("init_files",init_files)
 
 
 
 @transform(init_files,
            suffix(".bam"),
            ".CleanSam.bam")
-def picard_cleansam(input_file, output_file_name):
+def picard_cleansam(init_files, output_file_name):
     """
     :param input_file: string '12766.sorted.bam'
     :param output_file: string '12766.CleanSam.bam'
     :return: stderror and stdout
     """
-    print(["INIT Files", init_files])
-    out_log_file_path = LOG_DIR + os.path.splitext(input_file)[0] + ".out.log"
-    err_log_file_path = LOG_DIR + os.path.splitext(input_file)[0] + ".err.log"
+    print("INIT Files", init_files)
+    out_log_file_path = LOG_DIR + os.path.splitext(init_files)[0] + ".out.log"
+    err_log_file_path = LOG_DIR + os.path.splitext(init_files)[0] + ".err.log"
     out_file_path = output_file_names
 
 
     command_str = ("""java -Xmx8g -jar {picard} CleanSam INPUT={inp} OUTPUT={outp} VALIDATION_STRINGENCY=SILENT """
         """ CREATE_INDEX=true TMP_DIR=/tmp""".format(picard = PICARD_JAR,
-        inp = input_file, outp = out_file_path))
+        inp = init_files, outp = out_file_path))
     run_cmd(command_str, out_log_file_path, err_log_file_path)
 
 
