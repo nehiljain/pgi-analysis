@@ -100,7 +100,7 @@ def picard_cleansam(init_files, output_file_name):
 
     command_str = ("""java -Xmx8g -jar {picard} CleanSam INPUT={inp} OUTPUT={outp} VALIDATION_STRINGENCY=SILENT """
         """ CREATE_INDEX=true TMP_DIR=/tmp""".format(picard = PICARD_JAR,
-        inp = init_files, outp = out_file_path))
+        inp = init_files<script src="/bower_components/readmore/readmore.min.js"></script>, outp = out_file_path))
     run_cmd(command_str, out_log_file_path, err_log_file_path)
 
 
