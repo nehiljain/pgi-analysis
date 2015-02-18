@@ -1,0 +1,396 @@
+----------------------------------------------------------------------------------------------------
+INIT Files
+['Pool29.sorted.bam', 'Pool31.sorted.bam', 'Pool23.sorted.bam', 'Pool24.sorted.bam', 'Pool18.sorted.bam', 'Pool27.sorted.bam', 'Pool30.sorted.bam', 'Pool22.sorted.bam', 'Pool20.sorted.bam', 'Pool21.sorted.bam', 'Pool19.sorted.bam', 'Pool25.sorted.bam', 'Pool26.sorted.bam', 'Pool32.sorted.bam', 'Pool28.sorted.bam', 'Pool17.sorted.bam']
+----------------------------------------------------------------------------------------------------
+('init_files', ['Pool29.sorted.bam', 'Pool31.sorted.bam', 'Pool23.sorted.bam', 'Pool24.sorted.bam', 'Pool18.sorted.bam', 'Pool27.sorted.bam', 'Pool30.sorted.bam', 'Pool22.sorted.bam', 'Pool20.sorted.bam', 'Pool21.sorted.bam', 'Pool19.sorted.bam', 'Pool25.sorted.bam', 'Pool26.sorted.bam', 'Pool32.sorted.bam', 'Pool28.sorted.bam', 'Pool17.sorted.bam'])
+
+________________________________________
+Tasks which will be run:
+
+Task = picard_cleansam
+    ":param input_file: string '12766.sorted.bam' :param output_file: string '12766.CleanSam.bam'
+               :return: stderror and stdout"
+    Multiple jobs Multiple outputs
+       Job  = [Pool17.sorted.bam
+             -> Pool17.sorted.CleanSam.bam]
+         Job needs update: Previous incomplete run leftover:
+               [Pool17.sorted.CleanSam.bam]
+       Job  = [Pool18.sorted.bam
+             -> Pool18.sorted.CleanSam.bam]
+         Job needs update: Previous incomplete run leftover:
+               [Pool18.sorted.CleanSam.bam]
+       Job  = [Pool19.sorted.bam
+             -> Pool19.sorted.CleanSam.bam]
+         Job needs update: Previous incomplete run leftover:
+               [Pool19.sorted.CleanSam.bam]
+       Job  = [Pool20.sorted.bam
+             -> Pool20.sorted.CleanSam.bam]
+         Job needs update: Previous incomplete run leftover:
+               [Pool20.sorted.CleanSam.bam]
+       Job  = [Pool21.sorted.bam
+             -> Pool21.sorted.CleanSam.bam]
+         Job needs update: Missing file
+               [Pool21.sorted.CleanSam.bam]
+       Job  = [Pool22.sorted.bam
+             -> Pool22.sorted.CleanSam.bam]
+         Job needs update: Missing file
+               [Pool22.sorted.CleanSam.bam]
+       Job  = [Pool23.sorted.bam
+             -> Pool23.sorted.CleanSam.bam]
+         Job needs update: Missing file
+               [Pool23.sorted.CleanSam.bam]
+       Job  = [Pool24.sorted.bam
+             -> Pool24.sorted.CleanSam.bam]
+         Job needs update: Missing file
+               [Pool24.sorted.CleanSam.bam]
+       Job  = [Pool25.sorted.bam
+             -> Pool25.sorted.CleanSam.bam]
+         Job needs update: Missing file
+               [Pool25.sorted.CleanSam.bam]
+       Job  = [Pool26.sorted.bam
+             -> Pool26.sorted.CleanSam.bam]
+         Job needs update: Missing file
+               [Pool26.sorted.CleanSam.bam]
+       Job  = [Pool27.sorted.bam
+             -> Pool27.sorted.CleanSam.bam]
+         Job needs update: Missing file
+               [Pool27.sorted.CleanSam.bam]
+       Job  = [Pool28.sorted.bam
+             -> Pool28.sorted.CleanSam.bam]
+         Job needs update: Missing file
+               [Pool28.sorted.CleanSam.bam]
+       Job  = [Pool29.sorted.bam
+             -> Pool29.sorted.CleanSam.bam]
+         Job needs update: Missing file
+               [Pool29.sorted.CleanSam.bam]
+       Job  = [Pool30.sorted.bam
+             -> Pool30.sorted.CleanSam.bam]
+         Job needs update: Missing file
+               [Pool30.sorted.CleanSam.bam]
+       Job  = [Pool31.sorted.bam
+             -> Pool31.sorted.CleanSam.bam]
+         Job needs update: Missing file
+               [Pool31.sorted.CleanSam.bam]
+       Job  = [Pool32.sorted.bam
+             -> Pool32.sorted.CleanSam.bam]
+         Job needs update: Missing file
+               [Pool32.sorted.CleanSam.bam]
+
+Task = samtools_mapq20
+    ":param input_file: :param output_file: :param file_name: :return:"
+    Multiple jobs Multiple outputs
+       Job  = [Pool17.sorted.CleanSam.bam
+             -> Pool17.sorted.MAPQ20.bam]
+         Job needs update: Missing file
+               [Pool17.sorted.MAPQ20.bam]
+       Job  = [Pool18.sorted.CleanSam.bam
+             -> Pool18.sorted.MAPQ20.bam]
+         Job needs update: Missing file
+               [Pool18.sorted.MAPQ20.bam]
+       Job  = [Pool19.sorted.CleanSam.bam
+             -> Pool19.sorted.MAPQ20.bam]
+         Job needs update: Missing file
+               [Pool19.sorted.MAPQ20.bam]
+       Job  = [Pool20.sorted.CleanSam.bam
+             -> Pool20.sorted.MAPQ20.bam]
+         Job needs update: Missing file
+               [Pool20.sorted.MAPQ20.bam]
+       Job  = [Pool21.sorted.CleanSam.bam
+             -> Pool21.sorted.MAPQ20.bam]
+         Job needs update: Missing files
+               [Pool21.sorted.CleanSam.bam, Pool21.sorted.MAPQ20.bam]
+       Job  = [Pool22.sorted.CleanSam.bam
+             -> Pool22.sorted.MAPQ20.bam]
+         Job needs update: Missing files
+               [Pool22.sorted.CleanSam.bam, Pool22.sorted.MAPQ20.bam]
+       Job  = [Pool23.sorted.CleanSam.bam
+             -> Pool23.sorted.MAPQ20.bam]
+         Job needs update: Missing files
+               [Pool23.sorted.CleanSam.bam, Pool23.sorted.MAPQ20.bam]
+       Job  = [Pool24.sorted.CleanSam.bam
+             -> Pool24.sorted.MAPQ20.bam]
+         Job needs update: Missing files
+               [Pool24.sorted.CleanSam.bam, Pool24.sorted.MAPQ20.bam]
+       Job  = [Pool25.sorted.CleanSam.bam
+             -> Pool25.sorted.MAPQ20.bam]
+         Job needs update: Missing files
+               [Pool25.sorted.CleanSam.bam, Pool25.sorted.MAPQ20.bam]
+       Job  = [Pool26.sorted.CleanSam.bam
+             -> Pool26.sorted.MAPQ20.bam]
+         Job needs update: Missing files
+               [Pool26.sorted.CleanSam.bam, Pool26.sorted.MAPQ20.bam]
+       Job  = [Pool27.sorted.CleanSam.bam
+             -> Pool27.sorted.MAPQ20.bam]
+         Job needs update: Missing files
+               [Pool27.sorted.CleanSam.bam, Pool27.sorted.MAPQ20.bam]
+       Job  = [Pool28.sorted.CleanSam.bam
+             -> Pool28.sorted.MAPQ20.bam]
+         Job needs update: Missing files
+               [Pool28.sorted.CleanSam.bam, Pool28.sorted.MAPQ20.bam]
+       Job  = [Pool29.sorted.CleanSam.bam
+             -> Pool29.sorted.MAPQ20.bam]
+         Job needs update: Missing files
+               [Pool29.sorted.CleanSam.bam, Pool29.sorted.MAPQ20.bam]
+       Job  = [Pool30.sorted.CleanSam.bam
+             -> Pool30.sorted.MAPQ20.bam]
+         Job needs update: Missing files
+               [Pool30.sorted.CleanSam.bam, Pool30.sorted.MAPQ20.bam]
+       Job  = [Pool31.sorted.CleanSam.bam
+             -> Pool31.sorted.MAPQ20.bam]
+         Job needs update: Missing files
+               [Pool31.sorted.CleanSam.bam, Pool31.sorted.MAPQ20.bam]
+       Job  = [Pool32.sorted.CleanSam.bam
+             -> Pool32.sorted.MAPQ20.bam]
+         Job needs update: Missing files
+               [Pool32.sorted.CleanSam.bam, Pool32.sorted.MAPQ20.bam]
+
+Task = picard_fixmate
+    ":param input_file: :param output_file: :param log_file: :return:"
+    Multiple jobs Multiple outputs
+       Job  = [Pool17.sorted.MAPQ20.bam
+             -> Pool17.sorted.picard.Fixmate.bam]
+         Job needs update: Missing files
+               [Pool17.sorted.MAPQ20.bam, Pool17.sorted.picard.Fixmate.bam]
+       Job  = [Pool18.sorted.MAPQ20.bam
+             -> Pool18.sorted.picard.Fixmate.bam]
+         Job needs update: Missing files
+               [Pool18.sorted.MAPQ20.bam, Pool18.sorted.picard.Fixmate.bam]
+       Job  = [Pool19.sorted.MAPQ20.bam
+             -> Pool19.sorted.picard.Fixmate.bam]
+         Job needs update: Missing files
+               [Pool19.sorted.MAPQ20.bam, Pool19.sorted.picard.Fixmate.bam]
+       Job  = [Pool20.sorted.MAPQ20.bam
+             -> Pool20.sorted.picard.Fixmate.bam]
+         Job needs update: Missing files
+               [Pool20.sorted.MAPQ20.bam, Pool20.sorted.picard.Fixmate.bam]
+       Job  = [Pool21.sorted.MAPQ20.bam
+             -> Pool21.sorted.picard.Fixmate.bam]
+         Job needs update: Missing files
+               [Pool21.sorted.MAPQ20.bam, Pool21.sorted.picard.Fixmate.bam]
+       Job  = [Pool22.sorted.MAPQ20.bam
+             -> Pool22.sorted.picard.Fixmate.bam]
+         Job needs update: Missing files
+               [Pool22.sorted.MAPQ20.bam, Pool22.sorted.picard.Fixmate.bam]
+       Job  = [Pool23.sorted.MAPQ20.bam
+             -> Pool23.sorted.picard.Fixmate.bam]
+         Job needs update: Missing files
+               [Pool23.sorted.MAPQ20.bam, Pool23.sorted.picard.Fixmate.bam]
+       Job  = [Pool24.sorted.MAPQ20.bam
+             -> Pool24.sorted.picard.Fixmate.bam]
+         Job needs update: Missing files
+               [Pool24.sorted.MAPQ20.bam, Pool24.sorted.picard.Fixmate.bam]
+       Job  = [Pool25.sorted.MAPQ20.bam
+             -> Pool25.sorted.picard.Fixmate.bam]
+         Job needs update: Missing files
+               [Pool25.sorted.MAPQ20.bam, Pool25.sorted.picard.Fixmate.bam]
+       Job  = [Pool26.sorted.MAPQ20.bam
+             -> Pool26.sorted.picard.Fixmate.bam]
+         Job needs update: Missing files
+               [Pool26.sorted.MAPQ20.bam, Pool26.sorted.picard.Fixmate.bam]
+       Job  = [Pool27.sorted.MAPQ20.bam
+             -> Pool27.sorted.picard.Fixmate.bam]
+         Job needs update: Missing files
+               [Pool27.sorted.MAPQ20.bam, Pool27.sorted.picard.Fixmate.bam]
+       Job  = [Pool28.sorted.MAPQ20.bam
+             -> Pool28.sorted.picard.Fixmate.bam]
+         Job needs update: Missing files
+               [Pool28.sorted.MAPQ20.bam, Pool28.sorted.picard.Fixmate.bam]
+       Job  = [Pool29.sorted.MAPQ20.bam
+             -> Pool29.sorted.picard.Fixmate.bam]
+         Job needs update: Missing files
+               [Pool29.sorted.MAPQ20.bam, Pool29.sorted.picard.Fixmate.bam]
+       Job  = [Pool30.sorted.MAPQ20.bam
+             -> Pool30.sorted.picard.Fixmate.bam]
+         Job needs update: Missing files
+               [Pool30.sorted.MAPQ20.bam, Pool30.sorted.picard.Fixmate.bam]
+       Job  = [Pool31.sorted.MAPQ20.bam
+             -> Pool31.sorted.picard.Fixmate.bam]
+         Job needs update: Missing files
+               [Pool31.sorted.MAPQ20.bam, Pool31.sorted.picard.Fixmate.bam]
+       Job  = [Pool32.sorted.MAPQ20.bam
+             -> Pool32.sorted.picard.Fixmate.bam]
+         Job needs update: Missing files
+               [Pool32.sorted.MAPQ20.bam, Pool32.sorted.picard.Fixmate.bam]
+
+Task = picard_mark_duplicates
+    ":param input_file: :param output_file: :return:"
+    Multiple jobs Multiple outputs
+       Job  = [Pool17.sorted.picard.Fixmate.bam
+             -> Pool17.sorted.picard.DeDup.bam]
+         Job needs update: Missing files
+               [Pool17.sorted.picard.Fixmate.bam, Pool17.sorted.picard.DeDup.bam]
+       Job  = [Pool18.sorted.picard.Fixmate.bam
+             -> Pool18.sorted.picard.DeDup.bam]
+         Job needs update: Missing files
+               [Pool18.sorted.picard.Fixmate.bam, Pool18.sorted.picard.DeDup.bam]
+       Job  = [Pool19.sorted.picard.Fixmate.bam
+             -> Pool19.sorted.picard.DeDup.bam]
+         Job needs update: Missing files
+               [Pool19.sorted.picard.Fixmate.bam, Pool19.sorted.picard.DeDup.bam]
+       Job  = [Pool20.sorted.picard.Fixmate.bam
+             -> Pool20.sorted.picard.DeDup.bam]
+         Job needs update: Missing files
+               [Pool20.sorted.picard.Fixmate.bam, Pool20.sorted.picard.DeDup.bam]
+       Job  = [Pool21.sorted.picard.Fixmate.bam
+             -> Pool21.sorted.picard.DeDup.bam]
+         Job needs update: Missing files
+               [Pool21.sorted.picard.Fixmate.bam, Pool21.sorted.picard.DeDup.bam]
+       Job  = [Pool22.sorted.picard.Fixmate.bam
+             -> Pool22.sorted.picard.DeDup.bam]
+         Job needs update: Missing files
+               [Pool22.sorted.picard.Fixmate.bam, Pool22.sorted.picard.DeDup.bam]
+       Job  = [Pool23.sorted.picard.Fixmate.bam
+             -> Pool23.sorted.picard.DeDup.bam]
+         Job needs update: Missing files
+               [Pool23.sorted.picard.Fixmate.bam, Pool23.sorted.picard.DeDup.bam]
+       Job  = [Pool24.sorted.picard.Fixmate.bam
+             -> Pool24.sorted.picard.DeDup.bam]
+         Job needs update: Missing files
+               [Pool24.sorted.picard.Fixmate.bam, Pool24.sorted.picard.DeDup.bam]
+       Job  = [Pool25.sorted.picard.Fixmate.bam
+             -> Pool25.sorted.picard.DeDup.bam]
+         Job needs update: Missing files
+               [Pool25.sorted.picard.Fixmate.bam, Pool25.sorted.picard.DeDup.bam]
+       Job  = [Pool26.sorted.picard.Fixmate.bam
+             -> Pool26.sorted.picard.DeDup.bam]
+         Job needs update: Missing files
+               [Pool26.sorted.picard.Fixmate.bam, Pool26.sorted.picard.DeDup.bam]
+       Job  = [Pool27.sorted.picard.Fixmate.bam
+             -> Pool27.sorted.picard.DeDup.bam]
+         Job needs update: Missing files
+               [Pool27.sorted.picard.Fixmate.bam, Pool27.sorted.picard.DeDup.bam]
+       Job  = [Pool28.sorted.picard.Fixmate.bam
+             -> Pool28.sorted.picard.DeDup.bam]
+         Job needs update: Missing files
+               [Pool28.sorted.picard.Fixmate.bam, Pool28.sorted.picard.DeDup.bam]
+       Job  = [Pool29.sorted.picard.Fixmate.bam
+             -> Pool29.sorted.picard.DeDup.bam]
+         Job needs update: Missing files
+               [Pool29.sorted.picard.Fixmate.bam, Pool29.sorted.picard.DeDup.bam]
+       Job  = [Pool30.sorted.picard.Fixmate.bam
+             -> Pool30.sorted.picard.DeDup.bam]
+         Job needs update: Missing files
+               [Pool30.sorted.picard.Fixmate.bam, Pool30.sorted.picard.DeDup.bam]
+       Job  = [Pool31.sorted.picard.Fixmate.bam
+             -> Pool31.sorted.picard.DeDup.bam]
+         Job needs update: Missing files
+               [Pool31.sorted.picard.Fixmate.bam, Pool31.sorted.picard.DeDup.bam]
+       Job  = [Pool32.sorted.picard.Fixmate.bam
+             -> Pool32.sorted.picard.DeDup.bam]
+         Job needs update: Missing files
+               [Pool32.sorted.picard.Fixmate.bam, Pool32.sorted.picard.DeDup.bam]
+
+________________________________________
+   Checksum use calculated time as well: No 1 second pause...
+  Task = picard_cleansam
+    Needing update:
+      Job  = [Pool17.sorted.bam -> Pool17.sorted.CleanSam.bam]
+
+________________________________________
+Tasks which will be run:
+
+
+    fill_queue_with_job_parameters START
+   job_parameter_generator BEGIN
+   job_parameter_generator consider task = __main__.picard_cleansam
+   job_parameter_generator task __main__.picard_cleansam not in progress
+   job_parameter_generator start task __main__.picard_cleansam (parents completed)
+Task enters queue = picard_cleansam
+    :param input_file: string '12766.sorted.bam' :param output_file: string '12766.CleanSam.bam' :return: stderror and stdout
+    Job  = [Pool17.sorted.bam -> Pool17.sorted.CleanSam.bam] Previous incomplete run leftover:
+        [Pool17.sorted.CleanSam.bam] 
+    fill_queue_with_job_parameters=>('Pool17.sorted.bam', 'Pool17.sorted.CleanSam.bam')
+    Job  = [Pool18.sorted.bam -> Pool18.sorted.CleanSam.bam] Previous incomplete run leftover:
+        [Pool18.sorted.CleanSam.bam] 
+    fill_queue_with_job_parameters=>('Pool18.sorted.bam', 'Pool18.sorted.CleanSam.bam')
+    Job  = [Pool19.sorted.bam -> Pool19.sorted.CleanSam.bam] Previous incomplete run leftover:
+        [Pool19.sorted.CleanSam.bam] 
+    fill_queue_with_job_parameters=>('Pool19.sorted.bam', 'Pool19.sorted.CleanSam.bam')
+    Job  = [Pool20.sorted.bam -> Pool20.sorted.CleanSam.bam] Previous incomplete run leftover:
+        [Pool20.sorted.CleanSam.bam] 
+    fill_queue_with_job_parameters=>('Pool20.sorted.bam', 'Pool20.sorted.CleanSam.bam')
+    Job  = [Pool21.sorted.bam -> Pool21.sorted.CleanSam.bam] Missing file
+        [Pool21.sorted.CleanSam.bam] 
+    fill_queue_with_job_parameters=>('Pool21.sorted.bam', 'Pool21.sorted.CleanSam.bam')
+    Job  = [Pool22.sorted.bam -> Pool22.sorted.CleanSam.bam] Missing file
+        [Pool22.sorted.CleanSam.bam] 
+    fill_queue_with_job_parameters=>('Pool22.sorted.bam', 'Pool22.sorted.CleanSam.bam')
+    fill_queue_with_job_parameters END
+   Send param to Pooled Process START
+   Get next parameter size = 6
+   Get next parameter done
+   Send param to Pooled Process=>('Pool17.sorted.bam', 'Pool17.sorted.CleanSam.bam')
+   Get next parameter size = 5
+   Get next parameter done
+   Send param to Pooled Process=>('Pool18.sorted.bam', 'Pool18.sorted.CleanSam.bam')
+   Get next parameter size = 4
+   Get next parameter done
+   Send param to Pooled Process=>('Pool19.sorted.bam', 'Pool19.sorted.CleanSam.bam')
+   Get next parameter size = 3
+   Get next parameter done
+   Send param to Pooled Process=>('Pool20.sorted.bam', 'Pool20.sorted.CleanSam.bam')
+   Get next parameter size = 2
+   Get next parameter done
+   Send param to Pooled Process=>('Pool21.sorted.bam', 'Pool21.sorted.CleanSam.bam')
+   Get next parameter size = 1
+   Get next parameter done
+   Send param to Pooled Process=>('Pool22.sorted.bam', 'Pool22.sorted.CleanSam.bam')
+   Get next parameter size = 0
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>[[ job_wrapper ]]>>>>>>>>>>>>>>>>>>>>>>>>>>>
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>[[ job_wrapper ]]>>>>>>>>>>>>>>>>>>>>>>>>>>>
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>[[ job_wrapper ]]>>>>>>>>>>>>>>>>>>>>>>>>>>>
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>[[ job_wrapper ]]>>>>>>>>>>>>>>>>>>>>>>>>>>>
+EEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE[[ KeyboardInterrupt from task() ]]EEEEEEEEE
+EEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE[[ Other Interrupt ]]EEEEEEEEEEEEEEEEEEEEEEE
+EEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE[[ Other Interrupt ]]EEEEEEEEEEEEEEEEEEEEEEE
+       Exception caught 
+       Exception caught <type 'exceptions.KeyboardInterrupt'>
+       Exception caught Traceback (most recent call last):
+  File "/home/kasia/Envs/dna_seq_pipeline/local/lib/python2.7/site-packages/ruffus/task.py", line 3931, in pipeline_run
+    job_result = ii.next(timeout=99999999)
+  File "/usr/lib/python2.7/multiprocessing/pool.py", line 646, in next
+    self._cond.wait(timeout)
+  File "/usr/lib/python2.7/threading.py", line 358, in wait
+    _sleep(delay)
+KeyboardInterrupt
+
+   Get next parameter size = 0
+   Task with completed jobs size = 0
+   Get next parameter done
+       pool.close
+   Send param to Pooled Process END
+('INIT Files', 'Pool19.sorted.bam')
+----------------------------------------------------------------------------------------------------
+Running Shell Command: 
+
+java -Xmx8g -jar /home/kasia/picard/picard.jar CleanSam INPUT=Pool19.sorted.bam OUTPUT=Pool19.sorted.CleanSam.bam VALIDATION_STRINGENCY=SILENT  CREATE_INDEX=true TMP_DIR=/tmp
+       pool.terminate
+('INIT Files', 'Pool17.sorted.bam')
+----------------------------------------------------------------------------------------------------
+Running Shell Command: 
+
+java -Xmx8g -jar /home/kasia/picard/picard.jar CleanSam INPUT=Pool17.sorted.bam OUTPUT=Pool17.sorted.CleanSam.bam VALIDATION_STRINGENCY=SILENT  CREATE_INDEX=true TMP_DIR=/tmp
+       pool.terminated
+Traceback (most recent call last):
+  File "pipeline1.py", line 255, in <module>
+    pipeline_run(target_tasks = [picard_cleansam, samtools_mapq20, picard_fixmate, picard_mark_duplicates], verbose=10,checksum_level=3,verbose_abbreviated_path=1, multiprocess = 4)
+  File "/home/kasia/Envs/dna_seq_pipeline/local/lib/python2.7/site-packages/ruffus/task.py", line 4100, in pipeline_run
+    raise job_errors
+ruffus.ruffus_exceptions.RethrownJobError: 
+    
+    
+    
+Original exception:
+
+    Exception #1
+      '<type 'exceptions.KeyboardInterrupt'>' raised in ...
+    Traceback (most recent call last):
+      File "/home/kasia/Envs/dna_seq_pipeline/local/lib/python2.7/site-packages/ruffus/task.py", line 3931, in pipeline_run
+        job_result = ii.next(timeout=99999999)
+      File "/usr/lib/python2.7/multiprocessing/pool.py", line 646, in next
+        self._cond.wait(timeout)
+      File "/usr/lib/python2.7/threading.py", line 358, in wait
+        _sleep(delay)
+    KeyboardInterrupt
+    
+    

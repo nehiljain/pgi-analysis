@@ -1,0 +1,248 @@
+----------------------------------------------------------------------------------------------------
+INIT Files
+['Pool26.sorted.picard.Fixmate.bam', 'Pool19.sorted.picard.Fixmate.bam', 'Pool25.sorted.picard.Fixmate.bam', 'Pool27.sorted.picard.Fixmate.bam', 'Pool17.sorted.picard.Fixmate.bam', 'Pool31.sorted.picard.Fixmate.bam', 'Pool21.sorted.picard.Fixmate.bam', 'Pool23.sorted.picard.Fixmate.bam', 'Pool24.sorted.picard.Fixmate.bam', 'Pool28.sorted.picard.Fixmate.bam', 'Pool20.sorted.picard.Fixmate.bam', 'Pool30.sorted.picard.Fixmate.bam', 'Pool18.sorted.picard.Fixmate.bam', 'Pool32.sorted.picard.Fixmate.bam', 'Pool29.sorted.picard.Fixmate.bam', 'Pool22.sorted.picard.Fixmate.bam']
+----------------------------------------------------------------------------------------------------
+('init_files', ['Pool26.sorted.picard.Fixmate.bam', 'Pool19.sorted.picard.Fixmate.bam', 'Pool25.sorted.picard.Fixmate.bam', 'Pool27.sorted.picard.Fixmate.bam', 'Pool17.sorted.picard.Fixmate.bam', 'Pool31.sorted.picard.Fixmate.bam', 'Pool21.sorted.picard.Fixmate.bam', 'Pool23.sorted.picard.Fixmate.bam', 'Pool24.sorted.picard.Fixmate.bam', 'Pool28.sorted.picard.Fixmate.bam', 'Pool20.sorted.picard.Fixmate.bam', 'Pool30.sorted.picard.Fixmate.bam', 'Pool18.sorted.picard.Fixmate.bam', 'Pool32.sorted.picard.Fixmate.bam', 'Pool29.sorted.picard.Fixmate.bam', 'Pool22.sorted.picard.Fixmate.bam'])
+
+________________________________________
+Tasks which will be run:
+
+Task = picard_mark_duplicates
+    ":param input_file: :param output_file: :return:"
+    Multiple jobs Multiple outputs
+       Job  = [Pool17.sorted.picard.Fixmate.bam
+             -> Pool17.sorted.picard.DeDup.bam]
+         Job needs update: Missing file
+               [Pool17.sorted.picard.DeDup.bam]
+       Job  = [Pool18.sorted.picard.Fixmate.bam
+             -> Pool18.sorted.picard.DeDup.bam]
+         Job needs update: Missing file
+               [Pool18.sorted.picard.DeDup.bam]
+       Job  = [Pool19.sorted.picard.Fixmate.bam
+             -> Pool19.sorted.picard.DeDup.bam]
+         Job needs update: Missing file
+               [Pool19.sorted.picard.DeDup.bam]
+       Job  = [Pool20.sorted.picard.Fixmate.bam
+             -> Pool20.sorted.picard.DeDup.bam]
+         Job needs update: Missing file
+               [Pool20.sorted.picard.DeDup.bam]
+       Job  = [Pool21.sorted.picard.Fixmate.bam
+             -> Pool21.sorted.picard.DeDup.bam]
+         Job needs update: Missing file
+               [Pool21.sorted.picard.DeDup.bam]
+       Job  = [Pool22.sorted.picard.Fixmate.bam
+             -> Pool22.sorted.picard.DeDup.bam]
+         Job needs update: Missing file
+               [Pool22.sorted.picard.DeDup.bam]
+       Job  = [Pool23.sorted.picard.Fixmate.bam
+             -> Pool23.sorted.picard.DeDup.bam]
+         Job needs update: Previous incomplete run leftover:
+               [Pool23.sorted.picard.DeDup.bam]
+       Job  = [Pool24.sorted.picard.Fixmate.bam
+             -> Pool24.sorted.picard.DeDup.bam]
+         Job needs update: Missing file
+               [Pool24.sorted.picard.DeDup.bam]
+       Job  = [Pool25.sorted.picard.Fixmate.bam
+             -> Pool25.sorted.picard.DeDup.bam]
+         Job needs update: Missing file
+               [Pool25.sorted.picard.DeDup.bam]
+       Job  = [Pool26.sorted.picard.Fixmate.bam
+             -> Pool26.sorted.picard.DeDup.bam]
+         Job needs update: Missing file
+               [Pool26.sorted.picard.DeDup.bam]
+       Job  = [Pool27.sorted.picard.Fixmate.bam
+             -> Pool27.sorted.picard.DeDup.bam]
+         Job needs update: Missing file
+               [Pool27.sorted.picard.DeDup.bam]
+       Job  = [Pool28.sorted.picard.Fixmate.bam
+             -> Pool28.sorted.picard.DeDup.bam]
+         Job needs update: Missing file
+               [Pool28.sorted.picard.DeDup.bam]
+       Job  = [Pool29.sorted.picard.Fixmate.bam
+             -> Pool29.sorted.picard.DeDup.bam]
+         Job needs update: Missing file
+               [Pool29.sorted.picard.DeDup.bam]
+       Job  = [Pool30.sorted.picard.Fixmate.bam
+             -> Pool30.sorted.picard.DeDup.bam]
+         Job needs update: Missing file
+               [Pool30.sorted.picard.DeDup.bam]
+       Job  = [Pool31.sorted.picard.Fixmate.bam
+             -> Pool31.sorted.picard.DeDup.bam]
+         Job needs update: Missing file
+               [Pool31.sorted.picard.DeDup.bam]
+       Job  = [Pool32.sorted.picard.Fixmate.bam
+             -> Pool32.sorted.picard.DeDup.bam]
+         Job needs update: Missing file
+               [Pool32.sorted.picard.DeDup.bam]
+
+________________________________________
+   Checksum use calculated time as well: No 1 second pause...
+  Task = picard_mark_duplicates
+    Needing update:
+      Job  = [Pool17.sorted.picard.Fixmate.bam -> Pool17.sorted.picard.DeDup.bam]
+
+________________________________________
+Tasks which will be run:
+
+
+    fill_queue_with_job_parameters START
+   job_parameter_generator BEGIN
+   job_parameter_generator consider task = __main__.picard_mark_duplicates
+   job_parameter_generator task __main__.picard_mark_duplicates not in progress
+   job_parameter_generator start task __main__.picard_mark_duplicates (parents completed)
+Task enters queue = picard_mark_duplicates
+    :param input_file: :param output_file: :return:
+    Job  = [Pool17.sorted.picard.Fixmate.bam -> Pool17.sorted.picard.DeDup.bam] Missing file
+        [Pool17.sorted.picard.DeDup.bam] 
+    fill_queue_with_job_parameters=>('Pool17.sorted.picard.Fixmate.bam', 'Pool17.sorted.picard.DeDup.bam')
+    Job  = [Pool18.sorted.picard.Fixmate.bam -> Pool18.sorted.picard.DeDup.bam] Missing file
+        [Pool18.sorted.picard.DeDup.bam] 
+    fill_queue_with_job_parameters=>('Pool18.sorted.picard.Fixmate.bam', 'Pool18.sorted.picard.DeDup.bam')
+    Job  = [Pool19.sorted.picard.Fixmate.bam -> Pool19.sorted.picard.DeDup.bam] Missing file
+        [Pool19.sorted.picard.DeDup.bam] 
+    fill_queue_with_job_parameters=>('Pool19.sorted.picard.Fixmate.bam', 'Pool19.sorted.picard.DeDup.bam')
+    Job  = [Pool20.sorted.picard.Fixmate.bam -> Pool20.sorted.picard.DeDup.bam] Missing file
+        [Pool20.sorted.picard.DeDup.bam] 
+    fill_queue_with_job_parameters=>('Pool20.sorted.picard.Fixmate.bam', 'Pool20.sorted.picard.DeDup.bam')
+    Job  = [Pool21.sorted.picard.Fixmate.bam -> Pool21.sorted.picard.DeDup.bam] Missing file
+        [Pool21.sorted.picard.DeDup.bam] 
+    fill_queue_with_job_parameters=>('Pool21.sorted.picard.Fixmate.bam', 'Pool21.sorted.picard.DeDup.bam')
+    Job  = [Pool22.sorted.picard.Fixmate.bam -> Pool22.sorted.picard.DeDup.bam] Missing file
+        [Pool22.sorted.picard.DeDup.bam] 
+    fill_queue_with_job_parameters=>('Pool22.sorted.picard.Fixmate.bam', 'Pool22.sorted.picard.DeDup.bam')
+    fill_queue_with_job_parameters END
+   Send param to Pooled Process START
+   Get next parameter size = 6
+   Get next parameter done
+   Send param to Pooled Process=>('Pool17.sorted.picard.Fixmate.bam', 'Pool17.sorted.picard.DeDup.bam')
+   Get next parameter size = 5
+   Get next parameter done
+   Send param to Pooled Process=>('Pool18.sorted.picard.Fixmate.bam', 'Pool18.sorted.picard.DeDup.bam')
+   Get next parameter size = 4
+   Get next parameter done
+   Send param to Pooled Process=>('Pool19.sorted.picard.Fixmate.bam', 'Pool19.sorted.picard.DeDup.bam')
+   Get next parameter size = 3
+   Get next parameter done
+   Send param to Pooled Process=>('Pool20.sorted.picard.Fixmate.bam', 'Pool20.sorted.picard.DeDup.bam')
+   Get next parameter size = 2
+   Get next parameter done
+   Send param to Pooled Process=>('Pool21.sorted.picard.Fixmate.bam', 'Pool21.sorted.picard.DeDup.bam')
+   Get next parameter size = 1
+   Get next parameter done
+   Send param to Pooled Process=>('Pool22.sorted.picard.Fixmate.bam', 'Pool22.sorted.picard.DeDup.bam')
+   Get next parameter size = 0
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>[[ job_wrapper ]]>>>>>>>>>>>>>>>>>>>>>>>>>>>
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>[[ job_wrapper ]]>>>>>>>>>>>>>>>>>>>>>>>>>>>
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>[[ job_wrapper ]]>>>>>>>>>>>>>>>>>>>>>>>>>>>
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>[[ job_wrapper ]]>>>>>>>>>>>>>>>>>>>>>>>>>>>
+EEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE[[ Other Interrupt ]]EEEEEEEEEEEEEEEEEEEEEEE
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>[[ job_wrapper ]]>>>>>>>>>>>>>>>>>>>>>>>>>>>
+   Exception caught for Job  = [Pool17.sorted.picard.Fixmate.bam -> Pool17.sorted.picard.DeDup.bam]
+   signal completed task after checksumming...
+   job errors?
+   all tasks completed...
+   Get next parameter done
+   Send param to Pooled Process END
+EEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE[[ Other Interrupt ]]EEEEEEEEEEEEEEEEEEEEEEE
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>[[ job_wrapper ]]>>>>>>>>>>>>>>>>>>>>>>>>>>>
+   Exception caught for Job  = [Pool18.sorted.picard.Fixmate.bam -> Pool18.sorted.picard.DeDup.bam]
+   signal completed task after checksumming...
+   job errors?
+   all tasks completed...
+EEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE[[ Other Interrupt ]]EEEEEEEEEEEEEEEEEEEEEEE
+   Exception caught for Job  = [Pool20.sorted.picard.Fixmate.bam -> Pool20.sorted.picard.DeDup.bam]
+   signal completed task after checksumming...
+   job errors?
+   all tasks completed...
+   Exception caught for Job  = [Pool19.sorted.picard.Fixmate.bam -> Pool19.sorted.picard.DeDup.bam]
+   Break loop False 4 4 
+       pool.close
+       pool.terminate
+       pool.terminated
+Traceback (most recent call last):
+  File "pipeline1.py", line 255, in <module>
+    pipeline_run(target_tasks = [ picard_mark_duplicates], verbose=10,checksum_level=3,verbose_abbreviated_path=1, multiprocess = 4)
+  File "/home/kasia/Envs/dna_seq_pipeline/local/lib/python2.7/site-packages/ruffus/task.py", line 4124, in pipeline_run
+    raise job_errors
+ruffus.ruffus_exceptions.RethrownJobError: 
+    
+    
+    
+Original exceptions:
+
+    Exception #1
+      'exceptions.Exception(Failed to run 'java -Xmx8g -jar /home/kasia/picard/picard.jar MarkDuplicates INPUT=Pool17.sorted.picard.Fixmate.bam OUTPUT=Pool17.sorted.picard.DeDup.bam METRICS_FILE=Pool17.sorted.picard.Fixmate.metrics VALIDATION_STRINGENCY=SILENT REMOVE_DUPLICATES=true ASSUME_SORTED=true  CREATE_INDEX=true TMP_DIR=/tmp' 
+     Non-zero exit status 137)' raised in ...
+       Task = def picard_mark_duplicates(...):
+       Job  = [Pool17.sorted.picard.Fixmate.bam -> Pool17.sorted.picard.DeDup.bam]
+    
+    Traceback (most recent call last):
+      File "/home/kasia/Envs/dna_seq_pipeline/local/lib/python2.7/site-packages/ruffus/task.py", line 743, in run_pooled_job_without_exceptions
+        return_value =  job_wrapper(param, user_defined_work_func, register_cleanup, touch_files_only)
+      File "/home/kasia/Envs/dna_seq_pipeline/local/lib/python2.7/site-packages/ruffus/task.py", line 541, in job_wrapper_io_files
+        ret_val = user_defined_work_func(*param)
+      File "pipeline1.py", line 166, in picard_mark_duplicates
+        run_cmd(command_str, out_log_file_path, err_log_file_path)
+      File "pipeline1.py", line 66, in run_cmd
+        (cmd_str, process_returncode))
+    Exception: Failed to run 'java -Xmx8g -jar /home/kasia/picard/picard.jar MarkDuplicates INPUT=Pool17.sorted.picard.Fixmate.bam OUTPUT=Pool17.sorted.picard.DeDup.bam METRICS_FILE=Pool17.sorted.picard.Fixmate.metrics VALIDATION_STRINGENCY=SILENT REMOVE_DUPLICATES=true ASSUME_SORTED=true  CREATE_INDEX=true TMP_DIR=/tmp' 
+     Non-zero exit status 137
+    
+    
+    Exception #2
+      'exceptions.Exception(Failed to run 'java -Xmx8g -jar /home/kasia/picard/picard.jar MarkDuplicates INPUT=Pool18.sorted.picard.Fixmate.bam OUTPUT=Pool18.sorted.picard.DeDup.bam METRICS_FILE=Pool18.sorted.picard.Fixmate.metrics VALIDATION_STRINGENCY=SILENT REMOVE_DUPLICATES=true ASSUME_SORTED=true  CREATE_INDEX=true TMP_DIR=/tmp' 
+     Non-zero exit status 1)' raised in ...
+       Task = def picard_mark_duplicates(...):
+       Job  = [Pool18.sorted.picard.Fixmate.bam -> Pool18.sorted.picard.DeDup.bam]
+    
+    Traceback (most recent call last):
+      File "/home/kasia/Envs/dna_seq_pipeline/local/lib/python2.7/site-packages/ruffus/task.py", line 743, in run_pooled_job_without_exceptions
+        return_value =  job_wrapper(param, user_defined_work_func, register_cleanup, touch_files_only)
+      File "/home/kasia/Envs/dna_seq_pipeline/local/lib/python2.7/site-packages/ruffus/task.py", line 541, in job_wrapper_io_files
+        ret_val = user_defined_work_func(*param)
+      File "pipeline1.py", line 166, in picard_mark_duplicates
+        run_cmd(command_str, out_log_file_path, err_log_file_path)
+      File "pipeline1.py", line 66, in run_cmd
+        (cmd_str, process_returncode))
+    Exception: Failed to run 'java -Xmx8g -jar /home/kasia/picard/picard.jar MarkDuplicates INPUT=Pool18.sorted.picard.Fixmate.bam OUTPUT=Pool18.sorted.picard.DeDup.bam METRICS_FILE=Pool18.sorted.picard.Fixmate.metrics VALIDATION_STRINGENCY=SILENT REMOVE_DUPLICATES=true ASSUME_SORTED=true  CREATE_INDEX=true TMP_DIR=/tmp' 
+     Non-zero exit status 1
+    
+    
+    Exception #3
+      'exceptions.Exception(Failed to run 'java -Xmx8g -jar /home/kasia/picard/picard.jar MarkDuplicates INPUT=Pool20.sorted.picard.Fixmate.bam OUTPUT=Pool20.sorted.picard.DeDup.bam METRICS_FILE=Pool20.sorted.picard.Fixmate.metrics VALIDATION_STRINGENCY=SILENT REMOVE_DUPLICATES=true ASSUME_SORTED=true  CREATE_INDEX=true TMP_DIR=/tmp' 
+     Non-zero exit status 137)' raised in ...
+       Task = def picard_mark_duplicates(...):
+       Job  = [Pool20.sorted.picard.Fixmate.bam -> Pool20.sorted.picard.DeDup.bam]
+    
+    Traceback (most recent call last):
+      File "/home/kasia/Envs/dna_seq_pipeline/local/lib/python2.7/site-packages/ruffus/task.py", line 743, in run_pooled_job_without_exceptions
+        return_value =  job_wrapper(param, user_defined_work_func, register_cleanup, touch_files_only)
+      File "/home/kasia/Envs/dna_seq_pipeline/local/lib/python2.7/site-packages/ruffus/task.py", line 541, in job_wrapper_io_files
+        ret_val = user_defined_work_func(*param)
+      File "pipeline1.py", line 166, in picard_mark_duplicates
+        run_cmd(command_str, out_log_file_path, err_log_file_path)
+      File "pipeline1.py", line 66, in run_cmd
+        (cmd_str, process_returncode))
+    Exception: Failed to run 'java -Xmx8g -jar /home/kasia/picard/picard.jar MarkDuplicates INPUT=Pool20.sorted.picard.Fixmate.bam OUTPUT=Pool20.sorted.picard.DeDup.bam METRICS_FILE=Pool20.sorted.picard.Fixmate.metrics VALIDATION_STRINGENCY=SILENT REMOVE_DUPLICATES=true ASSUME_SORTED=true  CREATE_INDEX=true TMP_DIR=/tmp' 
+     Non-zero exit status 137
+    
+    
+    Exception #4
+      'exceptions.Exception(Failed to run 'java -Xmx8g -jar /home/kasia/picard/picard.jar MarkDuplicates INPUT=Pool19.sorted.picard.Fixmate.bam OUTPUT=Pool19.sorted.picard.DeDup.bam METRICS_FILE=Pool19.sorted.picard.Fixmate.metrics VALIDATION_STRINGENCY=SILENT REMOVE_DUPLICATES=true ASSUME_SORTED=true  CREATE_INDEX=true TMP_DIR=/tmp' 
+     Non-zero exit status 137)' raised in ...
+       Task = def picard_mark_duplicates(...):
+       Job  = [Pool19.sorted.picard.Fixmate.bam -> Pool19.sorted.picard.DeDup.bam]
+    
+    Traceback (most recent call last):
+      File "/home/kasia/Envs/dna_seq_pipeline/local/lib/python2.7/site-packages/ruffus/task.py", line 743, in run_pooled_job_without_exceptions
+        return_value =  job_wrapper(param, user_defined_work_func, register_cleanup, touch_files_only)
+      File "/home/kasia/Envs/dna_seq_pipeline/local/lib/python2.7/site-packages/ruffus/task.py", line 541, in job_wrapper_io_files
+        ret_val = user_defined_work_func(*param)
+      File "pipeline1.py", line 166, in picard_mark_duplicates
+        run_cmd(command_str, out_log_file_path, err_log_file_path)
+      File "pipeline1.py", line 66, in run_cmd
+        (cmd_str, process_returncode))
+    Exception: Failed to run 'java -Xmx8g -jar /home/kasia/picard/picard.jar MarkDuplicates INPUT=Pool19.sorted.picard.Fixmate.bam OUTPUT=Pool19.sorted.picard.DeDup.bam METRICS_FILE=Pool19.sorted.picard.Fixmate.metrics VALIDATION_STRINGENCY=SILENT REMOVE_DUPLICATES=true ASSUME_SORTED=true  CREATE_INDEX=true TMP_DIR=/tmp' 
+     Non-zero exit status 137
+    
+    

@@ -17,7 +17,7 @@ POPOOLATION2_DIR = "/home/kzukowski/soft/popoolation2_1201/"
 CATTLE_REF_DIR = "/home/kasia/data/reference/"
 CATTLE_REF_SEQ_FILE = CATTLE_REF_DIR + "Bos_taurus.UMD3.1.dna.toplevel.fa"
 
-INIT_DIR = "/home/kasia/data/gq_alignment_bam/pooled-data"
+INIT_DIR = "/home/kasia/data/rm_ruffus_test/"
 LOG_DIR = "/home/kasia/data/logs/"
 
 # BASE_DIR = "/share/volatile_scratch/nehil/pgi_wc/cattle/dna_seq/"
@@ -69,7 +69,7 @@ def run_cmd(cmd_str, output_log_file = 'output.log',
 def get_all_init_filepaths(dir_path):
     """This function gets the BAM files from the INIT DIR folder.
     """
-    pattern = re.compile("Fixmate.bam");
+    pattern = re.compile("sorted.bam");
     init_bam_files = [ f for f in os.listdir(dir_path)
                         if re.search(pattern, f)]
     print "-"*100
@@ -96,74 +96,77 @@ def picard_cleansam(init_files, output_file_name):
     out_log_file_path = LOG_DIR + os.path.splitext(init_files)[0] + ".out.log"
     err_log_file_path = LOG_DIR + os.path.splitext(init_files)[0] + ".err.log"
     out_file_path = output_file_name
+    command_str = ("""touch {outp}""".format(outp = out_file_path))	
 
-    command_str = ("""java -Xmx8g -jar {picard} CleanSam INPUT={inp} OUTPUT={outp} VALIDATION_STRINGENCY=SILENT """
-    """ CREATE_INDEX=true TMP_DIR=/tmp""".format(picard = PICARD_JAR, inp = init_files, outp = out_file_path))
+#    command_str = ("""java -Xmx8g -jar {picard} CleanSam INPUT={inp} OUTPUT={outp} VALIDATION_STRINGENCY=SILENT """
+#        """ CREATE_INDEX=true TMP_DIR=/tmp""".format(picard = PICARD_JAR,
+#        inp = init_files, outp = out_file_path))
     run_cmd(command_str, out_log_file_path, err_log_file_path)
 
 
-# @follows(picard_cleansam)
-# @transform(picard_cleansam,
-#            suffix(".CleanSam.bam"),
-#            ".MAPQ20.bam")
-# def samtools_mapq20(input_file, output_file):
-#     """
-#     :param input_file:
-#     :param output_file:
-#     :param file_name:
-#     :return:
-#     """
-#     out_log_file_path = LOG_DIR + os.path.splitext(input_file)[0] + ".out.log"
-#     err_log_file_path = LOG_DIR + os.path.splitext(input_file)[0] + ".err.log"
+@follows(picard_cleansam)
+@transform(picard_cleansam,
+           suffix(".CleanSam.bam"),
+           ".MAPQ20.bam")
+def samtools_mapq20(input_file, output_file):
+    """
+    :param input_file:
+    :param output_file:
+    :param file_name:
+    :return:
+    """
+    out_log_file_path = LOG_DIR + os.path.splitext(input_file)[0] + ".out.log"
+    err_log_file_path = LOG_DIR + os.path.splitext(input_file)[0] + ".err.log"
 
-#     command_str = ("""samtools view -bq 20 {inp}""".format(
-#       inp = input_file))
-#     run_cmd(command_str, output_file, err_log_file_path)
+    command_str = ("""samtools view -bq 20 {inp}""".format(
+        inp = input_file))
+    run_cmd(command_str, output_file, err_log_file_path)
 
 
-# @follows(samtools_mapq20)
-# @transform(init_files,
-#            suffix(".MAPQ20.bam"),
-#            ".picard.Fixmate.bam")
-# def picard_fixmate(input_file, output_file):
-#     """
+@follows(samtools_mapq20)
+@transform(samtools_mapq20,
+           suffix(".MAPQ20.bam"),
+           ".picard.Fixmate.bam")
+def picard_fixmate(input_file, output_file):
+    """
 
-#     :param input_file:
-#     :param output_file:
-#     :param log_file:
-#     :return:
-#     """
-#     out_log_file_path = LOG_DIR + os.path.splitext(input_file)[0] + ".out.log"
-#     err_log_file_path = LOG_DIR + os.path.splitext(input_file)[0] + ".err.log"
+    :param input_file:
+    :param output_file:
+    :param log_file:
+    :return:
+    """
+    out_log_file_path = LOG_DIR + os.path.splitext(input_file)[0] + ".out.log"
+    err_log_file_path = LOG_DIR + os.path.splitext(input_file)[0] + ".err.log"
 
-#     command_str = ("""java -Xmx8g -jar {picard} FixMateInformation INPUT={inp} OUTPUT={outp} VALIDATION_STRINGENCY=SILENT SORT_ORDER=coordinate ASSUME_SORTED=true ADD_MATE_CIGAR=true """
-#         """CREATE_INDEX=true TMP_DIR=/tmp""".format(picard = PICARD_JAR,
-#         inp = input_file, outp = output_file))
+    command_str = ("""java -Xmx8g -jar {picard} FixMateInformation INPUT={inp} OUTPUT={outp} VALIDATION_STRINGENCY=SILENT SORT_ORDER=coordinate ASSUME_SORTED=true ADD_MATE_CIGAR=true """
+        """CREATE_INDEX=true TMP_DIR=/tmp""".format(picard = PICARD_JAR,
+        inp = input_file, outp = output_file))
 
-#     run_cmd(command_str, out_log_file_path, err_log_file_path)
+    run_cmd(command_str, out_log_file_path, err_log_file_path)
 
-# @follows(picard_fixmate)
-@transform(init_files,
+@follows(picard_fixmate)
+@transform(picard_fixmate,
            suffix(".picard.Fixmate.bam"),
            ".picard.DeDup.bam")
 
-def picard_mark_duplicates(init_file, output_file):
+def picard_mark_duplicates(input_file, output_file):
     """
 
     :param input_file:
     :param output_file:
     :return:
     """
-    print("INIT Files", init_files, init_file)
-    out_metrics_file_path = os.path.splitext(init_file)[0] + ".metrics"
-    out_log_file_path = LOG_DIR + os.path.splitext(init_file)[0] + ".out.log"
-    err_log_file_path = LOG_DIR + os.path.splitext(init_file)[0] + ".err.log"
 
-    command_str = ("""java -jar {picard} MarkDuplicates INPUT={inp} OUTPUT={outp} METRICS_FILE={metrp} VALIDATION_STRINGENCY=SILENT REMOVE_DUPLICATES=true ASSUME_SORTED=true """
+    out_metrics_file_path = os.path.splitext(input_file)[0] + ".metrics"
+    out_log_file_path = LOG_DIR + os.path.splitext(input_file)[0] + ".out.log"
+    err_log_file_path = LOG_DIR + os.path.splitext(input_file)[0] + ".err.log"
+
+    command_str = ("""java -Xmx8g -jar {picard} MarkDuplicates INPUT={inp} OUTPUT={outp} METRICS_FILE={metrp} VALIDATION_STRINGENCY=SILENT REMOVE_DUPLICATES=true ASSUME_SORTED=true """
         """ CREATE_INDEX=true TMP_DIR=/tmp""".format(picard = PICARD_JAR,
-        inp = init_file, outp = output_file,
+        inp = input_file, outp = output_file,
         metrp = out_metrics_file_path ))
     run_cmd(command_str, out_log_file_path, err_log_file_path)
+
 
 # def picard_collect_multiple_metrics(input_file, output_file, file_name):
 #     """
@@ -250,8 +253,8 @@ ensure_path_exists(LOG_DIR)
 
 os.chdir(INIT_DIR)
 pipeline_get_task_names()
-# pipeline_printout(output_stream = sys.stdout, target_tasks = [ picard_mark_duplicates], verbose=10,checksum_level=3, verbose_abbreviated_path=1)
-pipeline_run(target_tasks = [ picard_mark_duplicates], verbose=6,checksum_level=3,verbose_abbreviated_path=1)
+pipeline_printout(output_stream = sys.stdout, target_tasks = [picard_cleansam, samtools_mapq20], verbose=10,checksum_level=3,verbose_abbreviated_path=1)
+pipeline_run(forcedtorun_tasks = [picard_cleansam, samtools_mapq20], verbose=10,checksum_level=3,verbose_abbreviated_path=1)
 
 
 
