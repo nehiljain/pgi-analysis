@@ -86,7 +86,7 @@ def cmh_test(filename):
 """>{log}""".format(cmh_pl = CMH_SCRIPT_PATH,
         inp = input_file_path, outp = out_file_path, log=out_log_file_path))
     print(command_str)
-    # run_cmd(command_str)
+    run_cmd(command_str)
 
 
 def main():
