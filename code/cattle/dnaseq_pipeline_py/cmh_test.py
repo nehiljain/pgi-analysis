@@ -75,7 +75,7 @@ def cmh_test(filename):
     print("filename:", filename)
     out_log_file_path = LOG_DIR + os.path.splitext(filename)[0] + ".out.log"
     err_log_file_path = LOG_DIR + os.path.splitext(filename)[0] + ".err.log"
-    out_file_path = output_file_names
+    out_file_path = CMH_OUTPUT_DIR + os.path.splitext(filename)[0] + ".cmh"
     print(filename, out_log_file_path, out_file_path)
 
 
@@ -100,5 +100,5 @@ def main():
         cmh_test(fname)
 
 
-if __name__ = '__main__':
+if __name__ == '__main__':
     main()
