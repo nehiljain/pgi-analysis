@@ -14,6 +14,13 @@ perl /home/nehil/popoolation2_1201/cmh-test.pl \
 '''
 
 
+
+import sys
+import subprocess
+import os
+import re
+
+
 CMH_SCRIPT_PATH = '/home/nehil/popoolation2_1201/cmh-test.pl'
 FILTERED_INPUT_DIR = '/share/volatile_scratch/nehil/pgi_wc/mouse/dna_seq/nehil_filtered_sync/'
 FILTERED_FILE_PREFIX = 'filtered_chr_'
@@ -91,3 +98,7 @@ def main():
     print("init_files",init_files)
     for fname in init_files:
         cmh_test(fname)
+
+
+if __name__ = '__main__':
+    main()
