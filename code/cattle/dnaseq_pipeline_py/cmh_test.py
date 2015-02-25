@@ -73,17 +73,18 @@ def cmh_test(filename):
     :return: stderror and stdout
     """
     print("filename:", filename)
+    input_file_path = FILTERED_INPUT_DIR + filename
     out_log_file_path = LOG_DIR + os.path.splitext(filename)[0] + ".out.log"
     err_log_file_path = LOG_DIR + os.path.splitext(filename)[0] + ".err.log"
     out_file_path = CMH_OUTPUT_DIR + os.path.splitext(filename)[0] + ".cmh"
-    print(filename, out_log_file_path, out_file_path)
+    print(filename,input_file_path, out_log_file_path, out_file_path)
 
 
     command_str = ("""perl {cmh_pl}  --input {inp}  --output {outp}  """
 """--min-count -1  --min-coverage -1  --max-coverage 1000000000  --remove-temp  """
 """--population 3-1,7-2,6-8,5-4  """
 """>{log}""".format(cmh_pl = CMH_SCRIPT_PATH,
-        inp = filename, outp = out_file_path, log=out_log_file_path))
+        inp = input_file_path, outp = out_file_path, log=out_log_file_path))
     print(command_str)
     # run_cmd(command_str)
 
