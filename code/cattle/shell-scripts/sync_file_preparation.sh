@@ -66,15 +66,29 @@ TMP_DIR=/tmp \
 
 date
 echo
-echo "qualimap metrics"
+echo "picard CollectMultipleMetrics"
 echo
 
-qualimap bamqc --java-mem-size=16G \
--bam /share/volatile_scratch/kzukowski/pgi/cattle/test/data/12766.dedup.bam \
--gff /share/volatile_scratch/kzukowski/pgi/cattle/reference/Bos_taurus.UMD3.1.77.gtf \
--c \
--os \ 
->/share/volatile_scratch/kzukowski/pgi/cattle/test/log/12766.qualimap.log 2>&1
+java -Xmx8g -jar /home/kzukowski/soft/picard-tools-1.119/CollectMultipleMetrics.jar \
+INPUT=/share/volatile_scratch/kzukowski/pgi/cattle/test/data/12766.dedup.bam \
+OUTPUT=/share/volatile_scratch/kzukowski/pgi/cattle/test/stats/12766.CollectMultipleMetrics \
+VALIDATION_STRINGENCY=SILENT \
+TMP_DIR=/tmp \
+>/share/volatile_scratch/kzukowski/pgi/cattle/test/log/12766.picard.CollectMultipleMetrics.log 2>&1
+
+date
+echo
+echo "picard CollectGcBiasMetrics"
+echo
+
+java -Xmx8g -jar /home/kzukowski/soft/picard-tools-1.119/CollectGcBiasMetrics.jar \
+INPUT=/share/volatile_scratch/kzukowski/pgi/cattle/test/data/12766.dedup.bam \
+OUTPUT=/share/volatile_scratch/kzukowski/pgi/cattle/test/stats/12766.CollectGcBiasMetrics \
+CHART_OUTPUT=/share/volatile_scratch/kzukowski/pgi/cattle/test/stats/12766.CollectGcBiasMetrics.pdf \
+REFERENCE_SEQUENCE=/share/volatile_scratch/kzukowski/pgi/cattle/reference/Bos_taurus.UMD3.1.dna.toplevel.fa \
+VALIDATION_STRINGENCY=SILENT \
+TMP_DIR=/tmp \
+>/share/volatile_scratch/kzukowski/pgi/cattle/test/log/12766.picard.CollectGcBiasMetricss.log 2>&1
 
 date
 echo
