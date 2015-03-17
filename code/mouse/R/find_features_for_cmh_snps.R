@@ -88,7 +88,7 @@ ref_gene_id_filename <- "/home/data/reference/77/Mus_musculus_genes_(GRCm38.p3).
 output_dir_path <- "/home/data/"
 
 
-genome_data <- read.csv(genome_data_filename,header=T)
+genome_data <- read.csv(genome_data_filename,header=T, nrows=1000)
 names(genome_data) <-c("chr_no","snp_pos","ref","p_values","chr_p_adjusted","genome_p_adjusted")
 
 ref_gene_id_data <- read.csv(file = ref_gene_id_filename, header = TRUE)
@@ -104,6 +104,8 @@ chromosome_list <- c(1:19, "X", "Y")
 
 
 find_snps_in_genes_cmh <- function(snp_data, ref_data, output_dir_Path) {
+    
+   
     cat("Dimesnions of Input Data frames", "Feature Dataset", dim(ref_data), "Snps Dataset", dim(snp_data), "\n\n")    
     
     out_file_name <- paste(output_dir_path,"cmh_snps_in_gene_features",".csv", sep="")
@@ -113,12 +115,16 @@ find_snps_in_genes_cmh <- function(snp_data, ref_data, output_dir_Path) {
         file.remove(out_file_name)
     }
 
-    find_store_related_features <- function(snp_row, out_file_name) {
+    find_store_related_features <- function(snp_row, ref_data, out_file_name) {
+        ref_data$chromosome_name <- as.character(ref_data$chromosome_name)
+        snp_row$chr_no <- as.character(snp_row$chr_no)
+        ref_data$chromosome_name <- str_join("chr", ref_data$chromosome_name)
+        filtered_ref_data <- filter(ref_data, chromosome_name ==  snp_row$chr_no)
         print(snp_row$chr_co)
         print(snp_row$snp_pos)
-        features_found_df <- filter(ref_data,
-                                        paste("chr", as.character(chromsome_name), sep="") ==  as.character(snp_row$chr_no),
-                                         (gene_start_bp - window_size) <= snp_row$snp_pos & (gene_end_bp + window_size) >= snp_row$snp_pos
+        cat("Dimesnions::", "Feature Dataset", dim(filtered_ref_data), "Snp Row Chromosome Number", snp_row$chr_no, "\n\n") 
+        features_found_df <- filter(filtered_ref_data,
+                                    (gene_start_bp - window_size) <= snp_row$snp_pos & (gene_end_bp + window_size) >= snp_row$snp_pos
                                         )
         print(dim(features_found_df))
         
@@ -142,6 +148,7 @@ find_snps_in_genes_cmh <- function(snp_data, ref_data, output_dir_Path) {
     d_ply(snp_data, .(snp_pos), function(x) {
         cat("Dimesnions of SNP row", dim(x), "\n\n")
         find_store_related_features(snp_row = x, 
+                                    ref_data,
                                     out_file_name)
     })
 }
@@ -149,6 +156,6 @@ find_snps_in_genes_cmh <- function(snp_data, ref_data, output_dir_Path) {
 
 
 
-d_ply(genome_data, .(chr_no), function(df) {
+d_ply(genome_data[1:1000,], .(chr_no), function(df) {
   find_snps_in_genes_cmh(df, ref_gene_id_data, output_dir_path)
 })
