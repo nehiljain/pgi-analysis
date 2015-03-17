@@ -3,7 +3,7 @@ rm(list=ls())
 library(plyr)
 library(dplyr)
 library(stringr)
-library(rattle)
+# library(rattle)
 
 # This script loads the GTF file for mouse, creates a header, munges the strings to be made useful, converts to a dataframe and writes it to RData and CSV Files
 # change the path to point to the GTF file from ensemble ftp://ftp.ensembl.org/pub/release-77/gtf/mus_musculus
@@ -13,7 +13,7 @@ library(rattle)
 # change the path to point to the GTF file from ensemble ftp://ftp.ensembl.org/pub/release-77/gtf/mus_musculus
 
 # WARNING: No gene name found for line 21995 to 22008 in mouse GTF file path and url above. Replaced with "NA"
-gtfFilePath <- "Downloads/Mus_musculus.GRCm38.77.gtf"
+gtfFilePath <- "/home/data/reference/77/Mus_musculus.GRCm38.77.gtf"
 
 # previewDf <- read.table(file = gtfFilePath,
 #                         header = FALSE,
@@ -30,7 +30,6 @@ colClassNames <- c("character", "factor", "factor", "integer", "integer", "chara
 gtfData <- read.table(file = gtfFilePath,
                       header = FALSE,
                       comment.char = "#",
-                      nrow = 1000,
                       na.strings = "NA",
                       fill = TRUE,
                       sep = "\t",
@@ -97,28 +96,28 @@ resultGtfData <- cbind(gtfData, formattedAttributes)
 
 str(resultGtfData)
 
-names(resultGtfData) <- normVarNames(names(resultGtfData))
+# names(resultGtfData) <- normVarNames(names(resultGtfData))
 
-save(resultGtfData, file = "mouse_gtf.RData")
-write.csv(resultGtfData, file = "mouse_gtf.csv",
+save(resultGtfData, file = "/home/data/reference/77/Mus_musculus.GRCm38.77.mouse_gtf.RData")
+write.csv(resultGtfData, file = "/home/data/reference/77/Mus_musculus.GRCm38.77.mouse_gtf.csv",
           quote = FALSE, na = "NA", row.names = FALSE)
 
 
-
-refGeneIdData <- read.csv(, file = "Downloads/mouse_gene_list-NCBIM37.67-mm9.txt",
-                          header = TRUE,
-                          comment.char = "#",
-                          na.strings = "NA",
-                          fill = TRUE)
-
-
-names(refGeneIdData) <- normVarNames(names(refGeneIdData))
-save(refGeneIdData, file = "mouse_gene_list_mm9.RData")
-write.csv(refGeneIdData, file = "mouse_gene_list_mm9.csv",
-          quote = FALSE, na = "NA", row.names = FALSE)
-
-write.csv(refGeneIdData[, 1], file = "test_mouse_gene_list_mm9.csv",
-          quote = FALSE, na = "NA", row.names = FALSE)
+# 
+# refGeneIdData <- read.csv(, file = "Downloads/mouse_gene_list-NCBIM37.67-mm9.txt",
+#                           header = TRUE,
+#                           comment.char = "#",
+#                           na.strings = "NA",
+#                           fill = TRUE)
+# 
+# 
+# names(refGeneIdData) <- normVarNames(names(refGeneIdData))
+# save(refGeneIdData, file = "mouse_gene_list_mm9.RData")
+# write.csv(refGeneIdData, file = "mouse_gene_list_mm9.csv",
+#           quote = FALSE, na = "NA", row.names = FALSE)
+# 
+# write.csv(refGeneIdData[, 1], file = "test_mouse_gene_list_mm9.csv",
+#           quote = FALSE, na = "NA", row.names = FALSE)
 
 
 

@@ -13,115 +13,142 @@ rm(list=ls())
 library(plyr)
 library(dplyr)
 library(stringr)
-library(rattle)
-
-refGeneIdData <- NULL
-lhgvDirpath <- NULL 
-cmdArguments <- commandArgs(trailingOnly=TRUE)
-halfWindowSize <- 500000
-refGeneIdFilename <- NULL
-outputDirPath <- NULL
 
 
-for (i in 1:length(cmdArguments)) {
-    print(paste("arg",as.character(i),"=",arguments[i]))
-    outputDirPath = cmdArguments[3]
-    refGeneIdFilename <- cmdArcmdArguments[2]
-    lhgvDirpath <- cmdArcmdArguments[1] 
+norm_var_names <- function(vars, sep="_") {
+  if (sep == ".") sep <- "\\."
+  
+  # Replace all _ and . and ' ' with the nominated separator.
+  
+  pat  <- '_|\\.| |,'
+  rep  <- sep
+  vars <- stringr::str_replace_all(vars, pat, rep)
+  
+  # Replace any all capitals words with Initial capitals
+  
+  pat  <- stringr::perl('(?<!\\p{Lu})(\\p{Lu})(\\p{Lu}*)')
+  rep  <- '\\1\\L\\2'
+  vars <- stringr::str_replace_all(vars, pat, rep)
+  
+  # Replace any capitals not at the beginning of the string with _ 
+  # and then the lowercase letter.
+  
+  pat  <- stringr::perl('(?<!^)(\\p{Lu})')
+  rep  <- paste0(sep, '\\L\\1')
+  vars <- stringr::str_replace_all(vars, pat, rep)
+  
+  # WHY DO THIS? Replace any number sequences not preceded by an
+  # underscore, with it preceded by an underscore. The (?<!...) is a
+  # lookbehind operator.
+  
+  pat  <- stringr::perl(paste0('(?<![', sep, '\\p{N}])(\\p{N}+)'))
+  rep  <- paste0(sep, '\\1')
+  vars <- stringr::str_replace_all(vars, pat, rep)
+  
+  # Remove any resulting initial or trailing underscore or multiples:
+  #
+  # _2level -> 2level
+  
+  vars <- stringr::str_replace(vars, "^_+", "")
+  vars <- stringr::str_replace(vars, "_+$", "")
+  vars <- stringr::str_replace(vars, "__+", "_")
+  
+  # Convert to lowercase
+  
+  vars <- tolower(vars)
+  
+  # Remove repeated separators.
+  
+  pat  <- paste0(sep, "+")
+  rep  <- sep
+  vars <- stringr::str_replace_all(vars, pat, rep)
+  
+  return(vars)
 }
 
+# ref_gene_id_data <- NULL
+# genome_data_filename <- NULL 
+# cmd_arguments <- commandArgs(trailingOnly=TRUE)
+# halfWindowSize <- 500000
+# ref_gene_id_filename <- NULL
+# output_dir_path <- NULL
+# 
+# 
+# for (i in 1:length(cmd_arguments)) {
+#     print(paste("arg",as.character(i),"=",cmd_arguments[i]))
+#     output_dir_path = cmd_arguments[3]
+#     ref_gene_id_filename <- cmd_arguments[2]
+#     genome_data_filename <- cmd_arguments[1] 
+# }
 
-snpHeaderName <- c("row_name", "snp_id", "lhi", "loc")
+ref_gene_id_data <- NULL
+genome_data_filename <- "/home/data/nehil_multiple_testing_csv/p_adjusted_genome.gwas"
+window_size <- 1000
+ref_gene_id_filename <- "/home/data/reference/77/Mus_musculus_genes_(GRCm38.p3).csv"
+output_dir_path <- "/home/data/"
 
 
-refGeneIdData <- read.csv(file = refGeneIdFilename, header = TRUE)
-names(refGeneIdData) <- normVarNames(names(refGeneIdData))
-refGeneIdData$gene_mid_loc = trunc((refGeneIdData$gene_start_bp + refGeneIdData$gene_end_bp)/2)
-refGeneIdData = refGeneIdData[c("ensembl_gene_id", "chromosome_name", "gene_start_bp", "gene_end_bp", "gene_mid_loc")]
+genome_data <- read.csv(genome_data_filename,header=T)
+names(genome_data) <-c("chr_no","snp_pos","ref","p_values","chr_p_adjusted","genome_p_adjusted")
 
-chromosomeList <- c(1:19, "X", "Y")
+ref_gene_id_data <- read.csv(file = ref_gene_id_filename, header = TRUE)
+names(ref_gene_id_data) <- norm_var_names(names(ref_gene_id_data))
+ref_gene_id_data$gene_mid_loc = trunc((ref_gene_id_data$gene_start_bp + ref_gene_id_data$gene_end_bp)/2)
+# ref_gene_id_data = ref_gene_id_data[,c("ensembl_gene_id", "chromosome_name", "gene_start_bp", "gene_end_bp", "gene_mid_loc")]
+ref_gene_id_data <- ref_gene_id_data[ , -which(names(ref_gene_id_data) %in% c("description"))]
+chromosome_list <- c(1:19, "X", "Y")
+
 
 # create a function to get the feature file name, the gwas file name, a string suffix to be put in outfile names
 
 
 
-findFeatureFor80kSnps <- function(lhgvFileName, chromosome_number, outputDirPath) {
+find_snps_in_genes_cmh <- function(snp_data, ref_data, output_dir_Path) {
+    cat("Dimesnions of Input Data frames", "Feature Dataset", dim(ref_data), "Snps Dataset", dim(snp_data), "\n\n")    
     
-    cat("Dimesnions of Input Data frames", "Feature Dataset", dim(refGeneIdData), "Snps Dataset", dim(lhgvFileName), "\n\n")    
-    outFilename <- paste(outputDirPath,"/" ,chromosome_number, "_80k_snps_in_gene_features",".csv", sep="")
-    
+    out_file_name <- paste(output_dir_path,"cmh_snps_in_gene_features",".csv", sep="")
     # Clearing the old version of the filess
-    cat("outFilename",outFilename )
-    
-    if (file.exists(outFilename) == TRUE) {
-        file.remove(outFilename)
+    cat("out_file_name",out_file_name )
+    if (file.exists(out_file_name) == TRUE) {
+        file.remove(out_file_name)
     }
-    snpColClassNames <- c("numeric","character", "numeric", "numeric")
-    snpData <- read.table(file = lhgvFileName,
-                              header = TRUE,
-                              comment.char = "#",
-                              na.strings = "NA",
-                              colClasses = snpColClassNames,
-                              fill = TRUE,
-                              sep = "\t",
-                              col.names = snpHeaderName)
-    
-    snpData$snp_id <- as.character(snpData$snp_id)
-    snpData$lhi <- as.numeric(snpData$lhi)
-    snpData$loc <- as.numeric(snpData$loc)
 
-    findAndStoreRelatedFeatures <- function(featureData, snpRow, outFilename ) {
-        print(chromosome_number)
-        print(snpRow$snp_id)
-        print(dim(featureData))
-        featuresFoundDataFrame <- filter(featureData, 
-                                         chromosome_name  ==  chromosome_number, 
-                                         (gene_mid_loc - halfWindowSize) <= snpRow$loc & (gene_mid_loc + halfWindowSize) >= snpRow$loc
+    find_store_related_features <- function(snp_row, out_file_name) {
+        print(snp_row$chr_co)
+        print(snp_row$snp_pos)
+        features_found_df <- filter(ref_data,
+                                        paste("chr", as.character(chromsome_name), sep="") ==  as.character(snp_row$chr_no),
+                                         (gene_start_bp - window_size) <= snp_row$snp_pos & (gene_end_bp + window_size) >= snp_row$snp_pos
                                         )
-        print(dim(featuresFoundDataFrame))
-        if (dim(featuresFoundDataFrame)[[1]] > 0) {
-            featuresFoundDataFrame$snp_id <- snpRow$snp_id
-            featuresFoundDataFrame$snp_bp <- snpRow$loc
-            featuresFoundDataFrame$snp_lhi <- snpRow$lhi
-            if (file.exists(outFilename) == TRUE) {
-                write.table(featuresFoundDataFrame, file = outFilename, quote=F, sep = ",", append = T,  col.names = FALSE, row.names = FALSE)
+        print(dim(features_found_df))
+        
+        if (dim(features_found_df)[[1]] > 0) {
+            features_found_df$snp_p_values <- snp_row$p_values
+            features_found_df$snp_pos <- snp_row$snp_pos
+            features_found_df$snp_ref <- snp_row$ref
+            features_found_df$snp_genome_p_values <- snp_row$genome_p_adjusted
+            features_found_df$snp_chr_p_values <- snp_row$chr_p_adjusted
+            print(str(features_found_df))
+            if (file.exists(out_file_name) == TRUE) {
+                write.table(features_found_df, file = out_file_name, quote=F, sep = ",", append = T,  col.names = FALSE, row.names = FALSE)
             }  else {
-                write.table(featuresFoundDataFrame, file = outFilename, quote=F, sep = ",", col.names = TRUE, row.names = FALSE)
+                write.table(features_found_df, file = out_file_name, quote=F, sep = ",", col.names = TRUE, row.names = FALSE)
             }
             
         }
     }
+
     ## Big Analysis
-    d_ply(snpData, .(snp_id), function(x) {
-        dim(x)
-        findAndStoreRelatedFeatures(featureData = filter(refGeneIdData, chromosome_name == chromosome_number), 
-                                    snpRow = x, 
-                                    outFilename)
+    d_ply(snp_data, .(snp_pos), function(x) {
+        cat("Dimesnions of SNP row", dim(x), "\n\n")
+        find_store_related_features(snp_row = x, 
+                                    out_file_name)
     })
 }
-# findFeatureFor80kSnps(lhgvFileName = "~/Downloads/linkage/lh_1.txt", chromosome_number = 1, outputDirPath = "~/mel")
 
 
 
 
-cat("Starting Analysis of finding Features with SNPs within \n\n")
-
-
-## Real work happening here.
-lhgvFilenamesList <- list.files(path=lhgvDirpath, pattern="lh_", ignore.case = T)
-cat("List of lhgvFilenamesList\n")
-print(lhgvFilenamesList)
-
-
-# run all chromosomes function
-for ( i in chromosomeList) {
-    cat("iteration ::",i)
-   
-    lhgvFileName <- lhgvFilenamesList[complete.cases(
-    str_locate(lhgvFilenamesList,
-                   pattern = paste("lh_",i,".txt", sep="")))]
-    lhgvFileName = paste(lhgvDirpath, lhgvFileName, sep="")
-    cat(" lhgvFileName : ", lhgvFileName,"\n\n")
-    # call function to start finding chromosome gene snp matches
-    findFeatureFor80kSnps(lhgvFileName , chromosome_number = i, outputDirPath)
-}
+d_ply(genome_data, .(chr_no), function(df) {
+  find_snps_in_genes_cmh(df, ref_gene_id_data, output_dir_path)
+})
