@@ -201,7 +201,7 @@ setnames(sync_df,names(sync_df),c("chromosome_name","snp_pos","ref","C1M","C2M",
 setkey(sync_df, chromosome_name, snp_pos)
 
 merge2 <- merge(x = g_significant, y = sync_df, by = "snp_pos", all.y = TRUE)
-merge2 <- merge2[1:2000,]
+# merge2 <- merge2[1:2000,]
 merge2 <- data.table(merge2)
 merge2[,(2:8) := NULL]
 merge2[,(2) := NULL]
@@ -210,3 +210,70 @@ non_sig_merge2 <- merge2[is.na()]
 sig_merge2 <- merge2[!is.na(genome_p_adjusted)]
 write.table(non_sig_merge2, "non_significant_chr19.sync", sep="\t", row.names=F, quote = F)
 write.table(merge2[375:2000], "sign_and_non_sign_chr19.sync", sep="\t", row.names=F, quote = F)
+
+test <- merge2
+split_df <- str_split(merge2$C1M,":")
+require(devtools)
+source_gist(4676064)
+
+// df - dataframe to be split and merged into (not data table)
+// colnames - list of columns to be split
+// sep=":"
+split_on_character <- function(df, col_name, sep=":") {
+  split_df <- str_split(df[,(col_name)],":")
+  split_df <- as.data.frame(split_df)
+  split_df <- as.data.frame(t(split_df))
+  row.names(split_df) <- NULL
+  return(split_df)
+}
+
+col_names <- c("C1M","C2M","C1F","C2F","S1F","S2M","S1M","S2F")
+
+
+input_df <- merge2
+new_df <- input_df
+for (x1 in col_names) {
+  out_cols <- split_on_character(as.data.frame(input_df), x1, ":")
+  print(dim(out_cols))
+  for (x2 in 1:dim(out_cols)[2]) {
+    col_name <- paste(x1,x2,sep="_")
+    print(col_name)
+    new_df[,col_name] <- data.frame(out_cols[,paste("V",x2,sep="")])
+  }
+}
+
+
+write.table(new_df, "split_chr19.sync", sep="\t", row.names=F, quote = F)
+
+
+library(Hmisc)
+#implement paper
+df <- fread("snp_in_gene_windows.csv", sep=",", sep2="", header=T)
+g_significant <- df[genome_p_adjusted < 0.05]
+g_significant <- na.omit(g_significant)
+g_significant[, nlp := -1 * log(genome_p_adjusted), by="ensembl_gene_id"]
+g_significant <- na.omit(g_significant)
+g_significant[, mean_nlp := mean(nlp), by="ensembl_gene_id"]
+g_significant[, max_nlp := mean(nlp), by="ensembl_gene_id"]
+
+g_significant$quartile <- by(g_significant, g_significant$ensembl_gene_id,  function(x) {cut(x$nlp, 
+                                breaks=quantile(x$nlp, probs=seq(0,1, by=0.25)), 
+                                include.lowest=TRUE)})
+g_significant$quartile <- as.factor(g_significant$quartile)
+
+custom_function <- function(x) {
+    return(cut(x, breaks=unique(quantile(x, probs=seq(0,1, by=0.25))), include.lowest=TRUE))
+}
+
+cut(c$nlp, 
+          breaks=unique(quantile(c$nlp, probs=seq(0,1, by=0.25))), 
+          include.lowest=TRUE)
+custom_function(c$nlp)
+
+c <- g_significant[ensembl_gene_id == "ENSMUSG00000051951",]
+
+g_significant[, check_length1 := custom_function(nlp), by="ensembl_gene_id"]
+
+
+
+ddply(g_significant, )

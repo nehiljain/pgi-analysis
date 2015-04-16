@@ -9,14 +9,15 @@ library(reshape2)
 
 genome_data_old <- read.table("/home/data/old_jn_cmh_gwas/genome.gwas", sep="\t", header = F)
 genome_data <- read.table("/home/data/kacper_cmh_gwas/genome.gwas", sep="\t", header = F)
-
+genome_data <- fread("/home/data/kacper_cmh_gwas/genome.gwas", sep="\t", sep2="auto", header=F,
+      stringsAsFactors=FALSE, verbose=TRUE)
 names(genome_data) <- c("chr_no", "snp_pos","ref","p_values")
 
 # input : .gwas file tab delimited as dataframe. 
 # ggplot bar plot with x values chromosme in ascending order and y snp count
 
 get_snp_freq_plot <- function(df) {
-  names(df) <- c("chr_no", "pos", "ref", "p_values")
+  names(df) <- c("chr_no")
   chr_snp_freq <-  as.data.frame(table(df$chr_no))
   chr_snp_freq$Var1 <-  str_replace_all(chr_snp_freq$Var1, "chr", "")
   names(chr_snp_freq) <- c("chr_no", "snp_count")
@@ -68,10 +69,10 @@ chr_genome_data <- ddply(genome_data, "chr_no", function(df) {
 })
 
 
-chr_genome_data$gnm_p_adjusted <- p.adjust(chr_genome_data$p_values, n=length(chr_genome_data$p_values), method="bonferroni")
+chr_genome_data$genome_p_adjusted <- p.adjust(chr_genome_data$p_values, n=length(chr_genome_data$p_values), method="bonferroni")
 
-
-
+names(chr_genome_data) <- c("chr_no","snp_pos","ref","p_values","chr_p_adjusted","genome_p_adjusted")
+write.csv(chr_genome_data, file="/home/data/nehil_multiple_testing_csv/p_adjusted_genome.gwas", row.names=F)
 
 plot_ready_genome_data <-melt(chr_genome_data, id.vars = c("chr_no","snp_pos","ref"))
 
