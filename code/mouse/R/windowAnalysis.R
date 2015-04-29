@@ -5,7 +5,7 @@ library(dplyr)
 library(ggplot2)
 library(stringr)
 
-
+#` Cleaning the Gene Name in the row 
 removeGeneNameTag <- function(row) {
     s <- as.character(row)
     gene_name_loc <- str_locate(s, "gene_name ")
@@ -13,11 +13,10 @@ removeGeneNameTag <- function(row) {
         return(str_trim(str_sub(s, start = gene_name_loc[2])))  
     }
     return(str_trim(s))
-  
 }
 
 
-
+#` Cleaning the Gene Id in the row
 removeGeneIdTag <- function(row) {
   s <- as.character(row)
   gene_id_loc <- str_locate(s, "gene_id ")
@@ -26,8 +25,6 @@ removeGeneIdTag <- function(row) {
       return(str_trim(str_sub(s, start = gene_id_loc[2])))  
   }
   return(str_trim(row))
-
-  
 }
 
 removeGeneBiotypeTag <- function(row) {
@@ -40,7 +37,8 @@ removeGeneBiotypeTag <- function(row) {
   return(str_trim(s))  
 }
 
-
+# input
+# output
 
 windowAnalysisPerChromosome <- function(inputFileName, outFilename) {
     if (file.exists(outFilename) == TRUE) {
@@ -98,8 +96,8 @@ windowAnalysisPerChromosome <- function(inputFileName, outFilename) {
             snp_count = numeric(length=numberOfRows),
             max_snp_cmh_neg_log = double(length=numberOfRows),
             min_snp_cmh_neg_log = double(length=numberOfRows),
-            mean_snp_cmh_neg_log = double(length=numberOfRows),
             sd_snp_cmh_neg_log = double(length=numberOfRows),
+            mean_snp_cmh_neg_log = double(length=numberOfRows),
             median_snp_cmh_neg_log = double(length=numberOfRows),
             gene_id = character(length=numberOfRows),
             gene_name = character(length=numberOfRows),

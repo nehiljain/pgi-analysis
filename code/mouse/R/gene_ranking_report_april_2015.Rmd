@@ -1,0 +1,182 @@
+---
+title: "Gene Ranking Analysis"
+output: html_document
+---
+
+This is the report and documentation of gene analysis for mouse.
+
+
+#NGS Data
+
+## All genes without any filtering. 
+
+Using Mean -log(p value). Manhattan plot is created for each gene.
+
+```{r, echo=FALSE, message = FALSE}
+library(plyr)
+library(dplyr)
+library(stringr)
+library(data.table)
+library(ggplot2)
+library(qqman)
+library(VennDiagram)
+
+result_rank_df <- fread("/home/data/all_snps_gene_ranking_stats.csv", sep=",", sep2="auto", header=T, na.strings="NA",
+      stringsAsFactors=FALSE)
+result_rank_df <- as.data.frame(result_rank_df)
+result_rank_df$BP <- (result_rank_df$gene_start + result_rank_df$gene_end) / 2
+
+produce_manhattan_plot_from_rank_stats <- function(column_name) {
+  man_plot_df <- result_rank_df[,c("chromosome_name","BP",column_name)]
+  man_plot_df$chromosome_name <- str_replace(man_plot_df$chromosome_name,pattern = "chr", replacement = "")
+  man_plot_df$SNP <- seq(1:length(result_rank_df$BP))
+  names(man_plot_df) <- c("CHR","BP","P","SNP")
+  man_plot_df[man_plot_df$CHR == 'X', c("CHR")] <- 20
+  man_plot_df[man_plot_df$CHR == 'Y', c("CHR")] <- 21
+  man_plot_df$CHR <- as.numeric(man_plot_df$CHR)
+  manhattan(man_plot_df, logp =F)
+}
+
+produce_manhattan_plot_from_rank_stats("mean_nlp")
+```
+
+Using Max -log(p value). Manhattan plot is created for each gene.
+
+```{r, echo=FALSE}
+produce_manhattan_plot_from_rank_stats("max_nlp")
+```
+
+Using Top Quartile Mean -log(p value). Manhattan plot is created for each gene.
+
+```{r, echo=FALSE}
+produce_manhattan_plot_from_rank_stats("topQ_nlp")
+```
+
+The type of gene in above analysis
+```{r, echo=FALSE}
+levels(as.factor(result_rank_df$gene_type))
+```
+
+
+
+
+```{r, echo=FALSE}
+result_rank_df <- data.table(result_rank_df)
+
+all_result_rank_df <- result_rank_df
+max_rank_genelist <- arrange(all_result_rank_df, desc(max_nlp))
+mean_rank_genelist <- arrange(all_result_rank_df, desc(mean_nlp))
+topQ_rank_genelist <- arrange(all_result_rank_df, desc(topQ_nlp))
+
+seq_list <- seq(500,20000, by = 100)
+
+all_union_inc_df <- ldply(seq_list, function(i) {
+  union_set_ngs <- union(max_rank_genelist$ensembl_gene_id[1:i], mean_rank_genelist$ensembl_gene_id[1:i])
+  union_set_ngs <- union(union_set_ngs, topQ_rank_genelist$ensembl_gene_id[1:i])
+
+  return(c(i,length(union_set_ngs)))
+})
+
+ggplot(data=all_union_inc_df, aes(x=V1, y=V2), group=1) +  geom_line() + 
+  scale_y_continuous(limits=c(0, max(all_union_inc_df$V2))) + 
+  ylab("number of genes in union") +
+  xlab("number of genes in each list")
+```
+
+## Filtering for Protein Coding Genes only
+
+Using Mean -log(p value). Manhattan plot is created for each gene.
+
+```{r, echo=FALSE}
+
+result_rank_df <- result_rank_df[gene_type == "protein_coding"]
+dim(result_rank_df)
+max_rank_genelist <- arrange(result_rank_df, desc(max_nlp))
+mean_rank_genelist <- arrange(result_rank_df, desc(mean_nlp))
+topQ_rank_genelist <- arrange(result_rank_df, desc(topQ_nlp))
+
+seq_list <- seq(500,20000, by = 100)
+
+union_inc_df <- ldply(seq_list, function(i) {
+  union_set_ngs <- union(max_rank_genelist$ensembl_gene_id[1:i], mean_rank_genelist$ensembl_gene_id[1:i])
+  union_set_ngs <- union(union_set_ngs, topQ_rank_genelist$ensembl_gene_id[1:i])
+
+  return(c(i,length(union_set_ngs)))
+})
+
+ggplot(data=union_inc_df, aes(x=V1, y=V2), group=1) +  
+  geom_line() + 
+  scale_y_continuous(limits=c(0, max(all_union_inc_df$V2))) + 
+  ylab("number of genes in union") +
+  xlab("number of genes in each list")
+
+
+
+result_rank_df <- as.data.frame(result_rank_df)
+produce_manhattan_plot_from_rank_stats("mean_nlp")
+```
+
+Using Max -log(p value). Manhattan plot is created for each gene.
+
+```{r, echo=FALSE}
+produce_manhattan_plot_from_rank_stats("max_nlp")
+```
+
+Using Top Quartile Mean -log(p value). Manhattan plot is created for each gene.
+
+```{r, echo=FALSE}
+produce_manhattan_plot_from_rank_stats("topQ_nlp")
+```
+
+
+Union of all top 500 protein coding genes using max, mean, topQ stats. Number of genes in Union Set are
+
+```{r, echo=FALSE}
+
+union_set_ngs <- union(max_rank_genelist$ensembl_gene_id[1:500], mean_rank_genelist$ensembl_gene_id[1:500])
+union_set_ngs <- union(union_set_ngs, topQ_rank_genelist$ensembl_gene_id[1:500])
+
+length(union_set_ngs)
+
+a <- merge(max_rank_genelist,mean_rank_genelist, by="ensembl_gene_id" )
+a <- merge(a, topQ_rank_genelist, by="ensembl_gene_id")
+
+write.csv(a, "/home/data/top_genes_ngs.csv", quote=F, row.names=F)
+
+```
+
+```{r, echo=FALSE, message=FALSE}
+
+top_genes_80k <- fread("/home/data/wgr_annotated_top_rank_genelist.csv", sep=",", sep2="auto", header=T, na.strings="NA",
+      stringsAsFactors=FALSE, verbose=T)
+top_genes_80k <- top_genes_80k[gene_biotype == "protein_coding"]
+top_genes_80k <- arrange(top_genes_80k, desc(lhgv))
+top_genes_80k <- top_genes_80k[1:500]
+
+write.csv(top_genes_80k, "/home/data/top_genes_80k.csv", quote=F, row.names=F)
+
+
+ovary <- fread("~/Downloads/OVARY_S-C - FC+-1.5_0.05pvalue.csv",sep=",", sep2="auto", header=T, na.strings="NA",
+      stringsAsFactors=FALSE)
+pitutary <- fread("~/Downloads/PITUITARY_S-C - FC+-1.5_0.05pvalue.csv",sep=",", sep2="auto", header=T, na.strings="NA",
+      stringsAsFactors=FALSE)
+
+top_genes_rna <- union(ovary$id, pitutary$id)
+
+venn_list <- list(NGS = union_set_ngs, TOP_80K = top_genes_80k$ensembl_gene_id, RNA = top_genes_rna )
+grid.newpage()
+venn.diagram(venn_list, 
+             filename = "~/venn-diagram-2way.png", imagetype = "png",
+             height = 1000, width = 1000, 
+             fill = c("#66c2a5","#fc8d62","#8da0cb"),
+             scaled = TRUE,
+             ext.text = TRUE,
+             cat.fontfamily = "serif",
+             cat.pos = c(0,10,180),
+             cat.dist = 0.05,
+             fontfamily = "serif"
+             )
+
+```
+The Venn Diagram of all the three lists. NGS, 80k and RNA 
+![Venn Diagram](/home/kasia/venn-diagram-2way.png)

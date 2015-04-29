@@ -192,7 +192,9 @@ write.csv(prod_ready_dt, "snp_in_gene_windows.csv")
 df <- fread("snp_in_gene_windows.csv", sep=",", sep2="", header=T)
 g_significant <- df[genome_p_adjusted < 0.05]
 g_significant <- df[, nlp := -1 * log(genome_p_adjusted)]
-qplot(data = g_significant, x = genome_p_adjusted, geom="histogram" )
+qplot(data = result_rank_df, x = mean_nlp, geom="histogram" )
+qplot(data = result_rank_df, x = max_nlp, geom="histogram" )
+qplot(data = result_rank_df, x = topQ_nlp, geom="histogram" )
 
 sync_df <- fread("/home/data/filtered_chr_19.sync", sep="\t", sep2="", header=F)
 g_significant <- g_significant[chromosome_name == "chr19"]
@@ -248,32 +250,73 @@ write.table(new_df, "split_chr19.sync", sep="\t", row.names=F, quote = F)
 
 library(Hmisc)
 #implement paper
-df <- fread("snp_in_gene_windows.csv", sep=",", sep2="", header=T)
+df <- fread("snp_in_gene_windows.csv", sep=",",  header=T)
 g_significant <- df[genome_p_adjusted < 0.05]
 g_significant <- na.omit(g_significant)
 g_significant[, nlp := -1 * log(genome_p_adjusted), by="ensembl_gene_id"]
 g_significant <- na.omit(g_significant)
-g_significant[, mean_nlp := mean(nlp), by="ensembl_gene_id"]
-g_significant[, max_nlp := mean(nlp), by="ensembl_gene_id"]
+# g_significant[, mean_nlp := mean(nlp), by="ensembl_gene_id"]
+# g_significant[, max_nlp := mean(nlp), by="ensembl_gene_id"]
 
-g_significant$quartile <- by(g_significant, g_significant$ensembl_gene_id,  function(x) {cut(x$nlp, 
-                                breaks=quantile(x$nlp, probs=seq(0,1, by=0.25)), 
-                                include.lowest=TRUE)})
-g_significant$quartile <- as.factor(g_significant$quartile)
 
-custom_function <- function(x) {
-    return(cut(x, breaks=unique(quantile(x, probs=seq(0,1, by=0.25))), include.lowest=TRUE))
+get_quartile <- function(df) {
+  if (dim(df)[1] == 1) {
+    
+    df$quartile <- df$nlp
+    
+  } else{
+    print(str(df))
+    df$quartile <- with(df, cut(nlp,
+                                breaks=unique(quantile(nlp, probs=seq(0,1, by=0.25))), 
+                                include.lowest=TRUE))
+    df$quartile <- as.factor(df$quartile)
+    last_quartile <- tail(levels(df$quartile), n=1)
+    print(last_quartile)
+    print(levels(df$quartile))
+    df$quartile_ch <- as.character(df$quartile)
+    df <- filter(df, as.character(quartile_ch) == as.character(last_quartile))
+    print(str(df))
+  }
+  df <-summarise(df, topQ_nlp = mean(nlp, na.rm = TRUE))
+  return(df)
 }
 
-cut(c$nlp, 
-          breaks=unique(quantile(c$nlp, probs=seq(0,1, by=0.25))), 
-          include.lowest=TRUE)
-custom_function(c$nlp)
+result_sign_snp_topq_df <- ddply(g_significant, "ensembl_gene_id", function(df) {
+#   print(str(df))
+  return(get_quartile(df))
+})
 
-c <- g_significant[ensembl_gene_id == "ENSMUSG00000051951",]
+df1 <- group_by(g_significant, ensembl_gene_id)
+mean_max_df <- summarise(df1,
+           snp_count = n(),               
+           mean_nlp = mean(nlp, na.rm = TRUE),
+           max_nlp = max(nlp))
+g_significant <- as.data.frame(g_significant)
+subs_g_sig <- g_significant[,c("ensembl_gene_id","chromosome_name","gene_start","gene_end","associated_gene_name","gene_type")]
+subs_g_sig <- unique(subs_g_sig)
+# mean_max_df <- as.data.frame(mean_max_df)
+result_rank_df <- merge(x = mean_max_df, y =  result_sign_snp_topq_df, by = "ensembl_gene_id", all.X =TRUE)
+result_rank_df <- merge(x = result_rank_df, y =  subs_g_sig, by = "ensembl_gene_id", all.X =TRUE)
+write.csv(result_rank_df,"/home/data/all_snps_gene_ranking_stats.csv",  row.names = F, quote=F)
 
-g_significant[, check_length1 := custom_function(nlp), by="ensembl_gene_id"]
+result_rank_df$BP <- (result_rank_df$gene_start + result_rank_df$gene_end) / 2
 
+produce_manhattan_plot_from_rank_stats <- function(column_name) {
+  man_plot_df <- result_rank_df[,c("chromosome_name","BP",column_name)]
+  man_plot_df$chromosome_name <- str_replace(man_plot_df$chromosome_name,pattern = "chr", replacement = "")
+  man_plot_df$SNP <- seq(1:length(result_rank_df$BP))
+  names(man_plot_df) <- c("CHR","BP","P","SNP")
+  man_plot_df[man_plot_df$CHR == 'X', c("CHR")] <- 20
+  man_plot_df[man_plot_df$CHR == 'Y', c("CHR")] <- 21
+  man_plot_df$CHR <- as.numeric(man_plot_df$CHR)
+  manhattan(man_plot_df, logp =F)
+}
 
-
-ddply(g_significant, )
+pdf("~/mean_max_topQ.pdf")
+produce_manhattan_plot_from_rank_stats("mean_nlp")
+text(100,6,"MEAN negative log p value manhattan plot with mid location of genes")
+produce_manhattan_plot_from_rank_stats("max_nlp")
+text(50,6,"MAX negative log p value manhattan plot with mid location of genes")
+produce_manhattan_plot_from_rank_stats("topQ_nlp")
+text(1,60,"TOPQ negative log p value manhattan plot with mid location of genes")
+dev.off()
